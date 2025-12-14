@@ -1,0 +1,408 @@
+-- Services
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local player = Players.LocalPlayer
+
+-- Remove any existing GUI first
+if player:WaitForChild("PlayerGui"):FindFirstChild("FredbearHub") then
+	player:WaitForChild("PlayerGui").FredbearHub:Destroy()
+end
+
+-- ScreenGui
+local gui = Instance.new("ScreenGui")
+gui.Name = "FredbearHub"
+gui.ResetOnSpawn = false
+gui.Parent = player:WaitForChild("PlayerGui")
+
+-- Main Frame (Slightly Bigger)
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 400, 0, 280) -- Increased from 360x250 to 400x280
+frame.Position = UDim2.fromScale(0.35, 0.35)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BorderSizePixel = 0
+frame.Parent = gui
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 18)
+
+-- Title
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -120, 0, 40) -- Adjusted for icon
+title.Position = UDim2.new(0, 50, 0, 0) -- Moved right for icon
+title.BackgroundTransparency = 1
+title.Text = "Fredbear Hub | Beta version"
+title.TextColor3 = Color3.new(1,1,1)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 20
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = frame
+
+-- Icon next to title (Decal)
+local icon = Instance.new("ImageLabel")
+icon.Size = UDim2.new(0, 32, 0, 32)
+icon.Position = UDim2.new(0, 10, 0, 4) -- Left of title
+icon.BackgroundTransparency = 1
+icon.Image = "rbxassetid://101900683058459" -- Your decal ID
+icon.ScaleType = Enum.ScaleType.Fit
+icon.Parent = frame
+
+-- Exit Button
+local exit = Instance.new("TextButton")
+exit.Size = UDim2.new(0, 36, 0, 36)
+exit.Position = UDim2.new(1, -44, 0, 2)
+exit.BackgroundColor3 = Color3.fromRGB(170, 50, 50)
+exit.Text = "X"
+exit.TextColor3 = Color3.new(1,1,1)
+exit.Font = Enum.Font.GothamBold
+exit.TextSize = 18
+exit.Parent = frame
+Instance.new("UICorner", exit).CornerRadius = UDim.new(0, 10)
+
+-- Exit with fade effect
+exit.MouseButton1Click:Connect(function()
+	-- Fade out all UI elements (text, buttons, images)
+	for _, child in ipairs(frame:GetDescendants()) do
+		if child:IsA("TextLabel") or child:IsA("TextButton") then
+			TweenService:Create(child, TweenInfo.new(0.3), {
+				TextTransparency = 1,
+				BackgroundTransparency = 1
+			}):Play()
+		elseif child:IsA("ImageLabel") then
+			TweenService:Create(child, TweenInfo.new(0.3), {
+				ImageTransparency = 1,
+				BackgroundTransparency = 1
+			}):Play()
+		elseif child:IsA("Frame") and child ~= frame then
+			TweenService:Create(child, TweenInfo.new(0.3), {
+				BackgroundTransparency = 1
+			}):Play()
+		end
+	end
+	
+	-- Wait a bit for fade to start
+	task.wait(0.2)
+	
+	-- Get current position and size
+	local currentPosition = frame.Position
+	local currentSize = frame.Size
+	
+	-- Shrink the entire frame upward to nothing
+	local shrinkTween = TweenService:Create(frame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+		Size = UDim2.new(0, 0, 0, 0),
+		Position = UDim2.new(
+			currentPosition.X.Scale + (currentSize.X.Scale / 2),
+			currentPosition.X.Offset + (currentSize.X.Offset / 2),
+			currentPosition.Y.Scale + (currentSize.Y.Scale / 2),
+			currentPosition.Y.Offset + (currentSize.Y.Offset / 2)
+		),
+		BackgroundTransparency = 1
+	})
+	shrinkTween:Play()
+	
+	-- Destroy after animation
+	shrinkTween.Completed:Connect(function()
+		gui:Destroy()
+	end)
+end)
+
+-- Minimize Button
+local minimize = Instance.new("TextButton")
+minimize.Size = UDim2.new(0, 36, 0, 36)
+minimize.Position = UDim2.new(1, -84, 0, 2) -- next to exit
+minimize.BackgroundColor3 = Color3.fromRGB(100,100,100)
+minimize.Text = "-"
+minimize.TextColor3 = Color3.new(1,1,1)
+minimize.Font = Enum.Font.GothamBold
+minimize.TextSize = 18
+minimize.Parent = frame
+Instance.new("UICorner", minimize).CornerRadius = UDim.new(0, 10)
+
+-- Container for all content below title
+local content = Instance.new("Frame")
+content.Size = UDim2.new(1,0,1,-50)
+content.Position = UDim2.new(0,0,0,50)
+content.BackgroundTransparency = 1
+content.Parent = frame
+
+-- =====================
+-- Highlight Button (OPTIMIZED)
+-- =====================
+local highlightBtn = Instance.new("TextButton")
+highlightBtn.Size = UDim2.new(0.9, 0, 0, 40)
+highlightBtn.Position = UDim2.new(0.05, 0, 0, 0)
+highlightBtn.BackgroundColor3 = Color3.fromRGB(50,50,50)
+highlightBtn.Text = "Highlight Animatronics: OFF"
+highlightBtn.TextColor3 = Color3.new(1,1,1)
+highlightBtn.Font = Enum.Font.Gotham
+highlightBtn.TextSize = 15
+highlightBtn.Parent = content
+Instance.new("UICorner", highlightBtn).CornerRadius = UDim.new(0, 12)
+
+local highlightEnabled = false
+
+local function applyHighlight(model)
+	if not model or model:FindFirstChild("AnimHighlight") then return end
+	local h = Instance.new("Highlight")
+	h.Name = "AnimHighlight"
+	h.FillTransparency = 0.8
+	h.FillColor = Color3.new(1, 1, 1)
+	h.OutlineColor = Color3.new(1, 1, 1)
+	h.OutlineTransparency = 0
+	h.Adornee = model
+	h.Parent = model
+end
+
+local function removeHighlight(model)
+	if not model then return end
+	local h = model:FindFirstChild("AnimHighlight")
+	if h then h:Destroy() end
+end
+
+highlightBtn.MouseButton1Click:Connect(function()
+	highlightEnabled = not highlightEnabled
+	if highlightEnabled then
+		highlightBtn.Text = "Highlight Animatronics: ON"
+		applyHighlight(workspace:FindFirstChild("FredBear"))
+		applyHighlight(workspace:FindFirstChild("SpringBonnie"))
+	else
+		highlightBtn.Text = "Highlight Animatronics: OFF"
+		removeHighlight(workspace:FindFirstChild("FredBear"))
+		removeHighlight(workspace:FindFirstChild("SpringBonnie"))
+	end
+end)
+
+-- =====================
+-- Speed Slider
+-- =====================
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Size = UDim2.new(0.9, 0, 0, 25)
+speedLabel.Position = UDim2.new(0.05,0,0,50)
+speedLabel.BackgroundTransparency = 1
+speedLabel.Text = "Speed Adjuster: 16"
+speedLabel.TextColor3 = Color3.new(1,1,1)
+speedLabel.Font = Enum.Font.Gotham
+speedLabel.TextSize = 15
+speedLabel.TextXAlignment = Enum.TextXAlignment.Left
+speedLabel.Parent = content
+
+local sliderFrame = Instance.new("Frame")
+sliderFrame.Size = UDim2.new(0.9,0,0,20)
+sliderFrame.Position = UDim2.new(0.05,0,0,80)
+sliderFrame.BackgroundColor3 = Color3.fromRGB(50,50,50)
+sliderFrame.Parent = content
+Instance.new("UICorner", sliderFrame).CornerRadius = UDim.new(0, 10)
+
+local fill = Instance.new("Frame")
+fill.Size = UDim2.new(0,0,1,0)
+fill.BackgroundColor3 = Color3.fromRGB(0,170,255)
+fill.Parent = sliderFrame
+Instance.new("UICorner", fill).CornerRadius = UDim.new(0,10)
+
+local handle = Instance.new("Frame")
+handle.Size = UDim2.new(0, 16, 1, 0)
+handle.AnchorPoint = Vector2.new(0.5,0.5)
+handle.Position = UDim2.new(0,0,0.5,0)
+handle.BackgroundColor3 = Color3.fromRGB(255,255,255)
+handle.Parent = sliderFrame
+Instance.new("UICorner", handle).CornerRadius = UDim.new(0,8)
+
+local MIN_SPEED = 16
+local MAX_SPEED = 100
+local draggingSlider = false
+local currentSpeed = 16
+
+local function updateSpeedFromPos(x)
+	x = math.clamp(x, 0, sliderFrame.AbsoluteSize.X)
+	local speed = math.floor(MIN_SPEED + (x / sliderFrame.AbsoluteSize.X) * (MAX_SPEED - MIN_SPEED))
+	currentSpeed = speed
+	fill.Size = UDim2.new(0,x,1,0)
+	handle.Position = UDim2.new(0,x,0.5,0)
+	local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+	if hum then
+		hum.WalkSpeed = speed
+	end
+	speedLabel.Text = "Speed Adjuster: "..speed
+end
+
+sliderFrame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		draggingSlider = true
+		local pos = input.Position.X - sliderFrame.AbsolutePosition.X
+		updateSpeedFromPos(pos)
+	end
+end)
+sliderFrame.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		draggingSlider = false
+	end
+end)
+UserInputService.InputChanged:Connect(function(input)
+	if draggingSlider and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local pos = input.Position.X - sliderFrame.AbsolutePosition.X
+		updateSpeedFromPos(pos)
+	end
+end)
+
+-- Reset Speed Button
+local resetBtn = Instance.new("TextButton")
+resetBtn.Size = UDim2.new(0.9,0,0,36)
+resetBtn.Position = UDim2.new(0.05,0,0,110)
+resetBtn.BackgroundColor3 = Color3.fromRGB(50,50,50)
+resetBtn.Text = "Reset Speed"
+resetBtn.TextColor3 = Color3.new(1,1,1)
+resetBtn.Font = Enum.Font.Gotham
+resetBtn.TextSize = 15
+resetBtn.Parent = content
+Instance.new("UICorner", resetBtn).CornerRadius = UDim.new(0,12)
+
+resetBtn.MouseButton1Click:Connect(function()
+	currentSpeed = 16
+	updateSpeedFromPos(0)
+end)
+
+-- Update speed on respawn
+local function applySpeedOnRespawn()
+	local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
+	if hum then
+		hum.WalkSpeed = currentSpeed
+		local x = ((currentSpeed - MIN_SPEED) / (MAX_SPEED - MIN_SPEED)) * sliderFrame.AbsoluteSize.X
+		fill.Size = UDim2.new(0,x,1,0)
+		handle.Position = UDim2.new(0,x,0.5,0)
+		speedLabel.Text = "Speed Adjuster: "..currentSpeed
+	end
+end
+player.CharacterAdded:Connect(function()
+	task.wait(0.2)
+	applySpeedOnRespawn()
+end)
+
+-- =====================
+-- Draggable GUI (excluding slider)
+-- =====================
+local dragging, dragStart, startPos
+frame.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		local mousePos = input.Position
+		local absPos = sliderFrame.AbsolutePosition
+		local absSize = sliderFrame.AbsoluteSize
+		if mousePos.X < absPos.X or mousePos.X > absPos.X+absSize.X or mousePos.Y < absPos.Y or mousePos.Y > absPos.Y+absSize.Y then
+			dragging = true
+			dragStart = mousePos
+			startPos = frame.Position
+		end
+	end
+end)
+frame.InputEnded:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = false
+	end
+end)
+UserInputService.InputChanged:Connect(function(input)
+	if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+		local delta = input.Position - dragStart
+		frame.Position = UDim2.new(
+			startPos.X.Scale,
+			startPos.X.Offset + delta.X,
+			startPos.Y.Scale,
+			startPos.Y.Offset + delta.Y
+		)
+	end
+end)
+
+-- =====================
+-- Minimize / Restore Animation
+-- =====================
+local minimized = false
+local originalSize = frame.Size
+
+minimize.MouseButton1Click:Connect(function()
+	minimized = not minimized
+	if minimized then
+		-- shrink frame
+		TweenService:Create(frame, TweenInfo.new(0.3), {Size = UDim2.new(frame.Size.X.Scale, frame.Size.X.Offset, 0, 50)}):Play()
+		-- fade out all content inside 'content'
+		for _, child in ipairs(content:GetChildren()) do
+			if child:IsA("TextLabel") then
+				TweenService:Create(child, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+			elseif child:IsA("TextButton") then
+				TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = 1, TextTransparency = 1}):Play()
+			elseif child:IsA("Frame") then
+				TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+				-- also fade its children if they have text (like handle/fill)
+				for _, sub in ipairs(child:GetChildren()) do
+					if sub:IsA("Frame") then
+						TweenService:Create(sub, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+					end
+				end
+			end
+		end
+	else
+		-- restore frame
+		TweenService:Create(frame, TweenInfo.new(0.3), {Size = originalSize}):Play()
+		-- fade in all content
+		for _, child in ipairs(content:GetChildren()) do
+			if child:IsA("TextLabel") then
+				TweenService:Create(child, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+			elseif child:IsA("TextButton") then
+				TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = 0, TextTransparency = 0}):Play()
+			elseif child:IsA("Frame") then
+				TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
+				for _, sub in ipairs(child:GetChildren()) do
+					if sub:IsA("Frame") then
+						TweenService:Create(sub, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
+					end
+				end
+			end
+		end
+	end
+end)
+
+-- Entry animation (opposite of exit)
+-- Start small and COMPLETELY invisible
+frame.BackgroundTransparency = 1
+frame.Size = UDim2.new(0, 0, 0, 0)
+frame.Position = UDim2.fromScale(0.5, 0.5)
+
+-- Make ALL children completely invisible from the START
+for _, child in ipairs(frame:GetDescendants()) do
+	if child:IsA("TextLabel") or child:IsA("TextButton") then
+		child.TextTransparency = 1
+		child.BackgroundTransparency = 1
+	elseif child:IsA("ImageLabel") then
+		child.ImageTransparency = 1
+	end
+end
+
+-- Animate entry after a small delay
+task.wait(0.5)
+
+-- Grow from center to final size (empty frame)
+local entryTween = TweenService:Create(frame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+	Size = UDim2.new(0, 400, 0, 280),
+	Position = UDim2.fromScale(0.35, 0.35),
+	BackgroundTransparency = 0
+})
+entryTween:Play()
+
+-- ONLY AFTER frame is fully grown, fade in ALL UI elements
+entryTween.Completed:Connect(function()
+	-- Fade in text and buttons
+	for _, child in ipairs(frame:GetDescendants()) do
+		if child:IsA("TextLabel") then
+			-- TextLabels: fade text only (keep background transparent)
+			TweenService:Create(child, TweenInfo.new(0.3), {
+				TextTransparency = 0
+			}):Play()
+		elseif child:IsA("TextButton") then
+			-- TextButtons: fade text AND background
+			TweenService:Create(child, TweenInfo.new(0.3), {
+				TextTransparency = 0,
+				BackgroundTransparency = 0
+			}):Play()
+		elseif child:IsA("ImageLabel") then
+			-- ImageLabels: fade image
+			TweenService:Create(child, TweenInfo.new(0.3), {
+				ImageTransparency = 0
+			}):Play()
+		end
+	end
+end)

@@ -365,7 +365,7 @@ handle.Parent = sliderFrame
 Instance.new("UICorner", handle).CornerRadius = UDim.new(0,8)
 
 local MIN_SPEED = 16
-local MAX_SPEED = 100
+local MAX_SPEED = 120
 local draggingSlider = false
 local currentSpeed = 16
 
@@ -516,8 +516,8 @@ local noFogEnabled = false
 
 local function enableNoFog()
     -- Disable fog
-    Lighting.FogStart = 999999
-    Lighting.FogEnd = 1000000
+    Lighting.FogStart = 0
+    Lighting.FogEnd = 10000000000
     
     noFogBtn.Text = "No Fog: ON"
     noFogEnabled = true
@@ -873,7 +873,8 @@ logsContentText.Text = [[Version 1.0:
 • Added Tabs: Settings, Main and Update Logs.
 • Added Themes: Black (Default), Aqua and pink!
 • Added No Fog and Full Bright in Main Tab.
-• Improved Topbar (Icon)
+• Improved Topbar (Icon).
+• Speed is now 100 to 120.
 
 Thanks For Executing this script, I hope this is HUGE update for you :)
 ]]
@@ -1016,3 +1017,4 @@ entryTween.Completed:Connect(function()
 		end
 	end
 end)
+

@@ -30,7 +30,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -120, 0, 40) -- Adjusted for icon
 title.Position = UDim2.new(0, 50, 0, 0) -- Moved right for icon
 title.BackgroundTransparency = 1
-title.Text = "Fredbear Hub | Version: 1.0"
+title.Text = "Fredbear Hub | Version: 1.1"
 title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 20
@@ -128,7 +128,7 @@ tabsContainer.Parent = frame
 
 -- Main Tab Button
 local mainTabBtn = Instance.new("TextButton")
-mainTabBtn.Size = UDim2.new(0.25, 0, 1, 0)
+mainTabBtn.Size = UDim2.new(0.22, 0, 1, 0)
 mainTabBtn.Position = UDim2.new(0, 0, 0, 0)
 mainTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 mainTabBtn.Text = "MAIN"
@@ -140,8 +140,8 @@ Instance.new("UICorner", mainTabBtn).CornerRadius = UDim.new(0, 8)
 
 -- Settings Tab Button
 local settingsTabBtn = Instance.new("TextButton")
-settingsTabBtn.Size = UDim2.new(0.25, 0, 1, 0)
-settingsTabBtn.Position = UDim2.new(0.27, 0, 0, 0)
+settingsTabBtn.Size = UDim2.new(0.22, 0, 1, 0)
+settingsTabBtn.Position = UDim2.new(0.24, 0, 0, 0)
 settingsTabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 settingsTabBtn.Text = "SETTINGS"
 settingsTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
@@ -150,10 +150,22 @@ settingsTabBtn.TextSize = 14
 settingsTabBtn.Parent = tabsContainer
 Instance.new("UICorner", settingsTabBtn).CornerRadius = UDim.new(0, 8)
 
+-- Credits Tab Button
+local creditsTabBtn = Instance.new("TextButton")
+creditsTabBtn.Size = UDim2.new(0.22, 0, 1, 0)
+creditsTabBtn.Position = UDim2.new(0.48, 0, 0, 0)
+creditsTabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+creditsTabBtn.Text = "CREDITS"
+creditsTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
+creditsTabBtn.Font = Enum.Font.GothamBold
+creditsTabBtn.TextSize = 14
+creditsTabBtn.Parent = tabsContainer
+Instance.new("UICorner", creditsTabBtn).CornerRadius = UDim.new(0, 8)
+
 -- Logs Tab Button
 local logsTabBtn = Instance.new("TextButton")
-logsTabBtn.Size = UDim2.new(0.25, 0, 1, 0)
-logsTabBtn.Position = UDim2.new(0.54, 0, 0, 0)
+logsTabBtn.Size = UDim2.new(0.22, 0, 1, 0)
+logsTabBtn.Position = UDim2.new(0.72, 0, 0, 0)
 logsTabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 logsTabBtn.Text = "LOGS"
 logsTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
@@ -199,6 +211,20 @@ settingsContent.CanvasSize = UDim2.new(0, 0, 0, 0)
 settingsContent.Visible = false
 settingsContent.Parent = tabContent
 
+-- Credits Tab Content
+local creditsContent = Instance.new("ScrollingFrame")
+creditsContent.Name = "CreditsContent"
+creditsContent.Size = UDim2.new(1, 0, 1, 0)
+creditsContent.Position = UDim2.new(0, 0, 0, 0)
+creditsContent.BackgroundTransparency = 1
+creditsContent.BorderSizePixel = 0
+creditsContent.ScrollBarThickness = 8
+creditsContent.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
+creditsContent.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+creditsContent.CanvasSize = UDim2.new(0, 0, 0, 0)
+creditsContent.Visible = false
+creditsContent.Parent = tabContent
+
 -- Logs Tab Content
 local logsContent = Instance.new("ScrollingFrame")
 logsContent.Name = "LogsContent"
@@ -226,11 +252,14 @@ local function switchTab(tabName)
     mainTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
     settingsTabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     settingsTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
+    creditsTabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    creditsTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
     logsTabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
     logsTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
     
     mainContent.Visible = false
     settingsContent.Visible = false
+    creditsContent.Visible = false
     logsContent.Visible = false
     
     -- Activate selected tab
@@ -242,6 +271,10 @@ local function switchTab(tabName)
         settingsTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         settingsTabBtn.TextColor3 = Color3.new(1, 1, 1)
         settingsContent.Visible = true
+    elseif tabName == "credits" then
+        creditsTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+        creditsTabBtn.TextColor3 = Color3.new(1, 1, 1)
+        creditsContent.Visible = true
     elseif tabName == "logs" then
         logsTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
         logsTabBtn.TextColor3 = Color3.new(1, 1, 1)
@@ -255,6 +288,10 @@ end)
 
 settingsTabBtn.MouseButton1Click:Connect(function()
     switchTab("settings")
+end)
+
+creditsTabBtn.MouseButton1Click:Connect(function()
+    switchTab("credits")
 end)
 
 logsTabBtn.MouseButton1Click:Connect(function()
@@ -365,7 +402,7 @@ handle.Parent = sliderFrame
 Instance.new("UICorner", handle).CornerRadius = UDim.new(0,8)
 
 local MIN_SPEED = 16
-local MAX_SPEED = 120
+local MAX_SPEED = 100
 local draggingSlider = false
 local currentSpeed = 16
 
@@ -516,8 +553,8 @@ local noFogEnabled = false
 
 local function enableNoFog()
     -- Disable fog
-    Lighting.FogStart = 0
-    Lighting.FogEnd = 10000000000
+    Lighting.FogStart = 999999
+    Lighting.FogEnd = 1000000
     
     noFogBtn.Text = "No Fog: ON"
     noFogEnabled = true
@@ -698,10 +735,11 @@ local function applyTheme(themeName)
     -- Apply theme to buttons
     for _, child in ipairs(frame:GetDescendants()) do
         if child:IsA("TextButton") then
-            if child == mainTabBtn or child == settingsTabBtn or child == logsTabBtn then
+            if child == mainTabBtn or child == settingsTabBtn or child == creditsTabBtn or child == logsTabBtn then
                 -- Tab buttons
                 if (child == mainTabBtn and currentTab == "main") or 
                    (child == settingsTabBtn and currentTab == "settings") or
+                   (child == creditsTabBtn and currentTab == "credits") or
                    (child == logsTabBtn and currentTab == "logs") then
                     TweenService:Create(child, TweenInfo.new(0.3), {
                         BackgroundColor3 = Color3.fromRGB(
@@ -799,6 +837,119 @@ dropdownButton.MouseButton1Click:Connect(toggleDropdown)
 updateSettingsCanvasSize()
 
 -- =====================
+-- CREDITS TAB CONTENT
+-- =====================
+local creditsContainer = Instance.new("Frame")
+creditsContainer.Name = "CreditsContainer"
+creditsContainer.Size = UDim2.new(1, 0, 0, 0)
+creditsContainer.BackgroundTransparency = 1
+creditsContainer.Parent = creditsContent
+
+-- Function to update credits canvas size
+local function updateCreditsCanvasSize()
+    local totalHeight = 0
+    for _, child in ipairs(creditsContainer:GetChildren()) do
+        if child:IsA("GuiObject") then
+            totalHeight = totalHeight + child.Size.Y.Offset + 10
+        end
+    end
+    creditsContent.CanvasSize = UDim2.new(0, 0, 0, totalHeight)
+    creditsContainer.Size = UDim2.new(1, 0, 0, totalHeight)
+end
+
+-- Credits Title
+local creditsTitle = Instance.new("TextLabel")
+creditsTitle.Size = UDim2.new(0.9, 0, 0, 50)
+creditsTitle.Position = UDim2.new(0.05, 0, 0, 0)
+creditsTitle.BackgroundTransparency = 1
+creditsTitle.Text = "CREDITS"
+creditsTitle.TextColor3 = Color3.fromRGB(0, 200, 255)
+creditsTitle.Font = Enum.Font.GothamBold
+creditsTitle.TextSize = 24
+creditsTitle.TextXAlignment = Enum.TextXAlignment.Center
+creditsTitle.Parent = creditsContainer
+
+-- Developer Label
+local devLabel = Instance.new("TextLabel")
+devLabel.Size = UDim2.new(0.9, 0, 0, 30)
+devLabel.Position = UDim2.new(0.05, 0, 0, 60)
+devLabel.BackgroundTransparency = 1
+devLabel.Text = "Developer"
+devLabel.TextColor3 = Color3.new(1, 1, 1)
+devLabel.Font = Enum.Font.GothamBold
+devLabel.TextSize = 18
+devLabel.TextXAlignment = Enum.TextXAlignment.Center
+devLabel.Parent = creditsContainer
+
+-- Developer Name (Change this to your name)
+local devName = Instance.new("TextLabel")
+devName.Size = UDim2.new(0.9, 0, 0, 40)
+devName.Position = UDim2.new(0.05, 0, 0, 95)
+devName.BackgroundTransparency = 1
+devName.Text = "Username: @Impro_rivalsplayer57 \nDisplay Name: Gojo" -- CHANGE THIS TO YOUR NAME
+devName.TextColor3 = Color3.fromRGB(127, 255, 0)
+devName.Font = Enum.Font.Gotham
+devName.TextSize = 20
+devName.TextXAlignment = Enum.TextXAlignment.Center
+devName.Parent = creditsContainer
+
+-- Special Thanks Label
+local thanksLabel = Instance.new("TextLabel")
+thanksLabel.Size = UDim2.new(0.9, 0, 0, 30)
+thanksLabel.Position = UDim2.new(0.05, 0, 0, 150)
+thanksLabel.BackgroundTransparency = 1
+thanksLabel.Text = "Special Thanks"
+thanksLabel.TextColor3 = Color3.new(1, 1, 1)
+thanksLabel.Font = Enum.Font.GothamBold
+thanksLabel.TextSize = 18
+thanksLabel.TextXAlignment = Enum.TextXAlignment.Center
+thanksLabel.Parent = creditsContainer
+
+-- Special Thanks Content
+local thanksContent = Instance.new("TextLabel")
+thanksContent.Size = UDim2.new(0.9, 0, 0, 120)
+thanksContent.Position = UDim2.new(0.05, 0, 0, 185)
+thanksContent.BackgroundTransparency = 1
+thanksContent.Text = "• DeepSeek AI Assistant\n• Roblox Developer Community \n• All Supporters"
+thanksContent.TextColor3 = Color3.new(0.9, 0.9, 0.9)
+thanksContent.Font = Enum.Font.Gotham
+thanksContent.TextSize = 16
+thanksContent.TextXAlignment = Enum.TextXAlignment.Center
+thanksContent.TextYAlignment = Enum.TextYAlignment.Top
+thanksContent.TextWrapped = true
+thanksContent.Parent = creditsContainer
+
+-- Version Info
+local versionInfo = Instance.new("TextLabel")
+versionInfo.Size = UDim2.new(0.9, 0, 0, 60)
+versionInfo.Position = UDim2.new(0.05, 0, 0, 320)
+versionInfo.BackgroundTransparency = 1
+versionInfo.Text = "Fredbear Hub v1.1"
+versionInfo.TextColor3 = Color3.new(0.7, 0.7, 0.7)
+versionInfo.Font = Enum.Font.Gotham
+versionInfo.TextSize = 14
+versionInfo.TextXAlignment = Enum.TextXAlignment.Center
+versionInfo.TextYAlignment = Enum.TextYAlignment.Top
+versionInfo.TextWrapped = true
+versionInfo.Parent = creditsContainer
+
+-- Edit Note
+local creditsNote = Instance.new("TextLabel")
+creditsNote.Size = UDim2.new(0.9, 0, 0, 40)
+creditsNote.Position = UDim2.new(0.05, 0, 0, 390)
+creditsNote.BackgroundTransparency = 1
+creditsNote.Text = " "
+creditsNote.TextColor3 = Color3.fromRGB(255, 150, 50)
+creditsNote.Font = Enum.Font.Gotham
+creditsNote.TextSize = 12
+creditsNote.TextXAlignment = Enum.TextXAlignment.Center
+creditsNote.TextWrapped = true
+creditsNote.Parent = creditsContainer
+
+-- Update credits canvas size
+updateCreditsCanvasSize()
+
+-- =====================
 -- LOGS TAB CONTENT
 -- =====================
 local logsContainer = Instance.new("Frame")
@@ -836,7 +987,7 @@ local versionLabel = Instance.new("TextLabel")
 versionLabel.Size = UDim2.new(0.9, 0, 0, 25)
 versionLabel.Position = UDim2.new(0.05, 0, 0, 50)
 versionLabel.BackgroundTransparency = 1
-versionLabel.Text = "Version 1.0 - Latest Update"
+versionLabel.Text = "Version 1.1 - Latest Update"
 versionLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
 versionLabel.Font = Enum.Font.GothamBold
 versionLabel.TextSize = 16
@@ -869,16 +1020,11 @@ local logsContentText = Instance.new("TextLabel")
 logsContentText.Size = UDim2.new(0.9, 0, 0, 300)
 logsContentText.Position = UDim2.new(0.05, 0, 0, 125)
 logsContentText.BackgroundTransparency = 1
-logsContentText.Text = [[Version 1.0:
-• Added Tabs: Settings, Main and Update Logs.
-• Added Themes: Black (Default), Aqua and pink!
-• Added No Fog and Full Bright in Main Tab.
-• Improved Topbar (Icon).
-• Maximum Speed increased 100 to 120.
-
-Thanks For Executing this script, I hope this is HUGE update for you :)
+logsContentText.Text = [[Update 1.1:
+• Added Credits tab.
+• Improved Topbar.
+Thanks for executing this script hope you have nice day :D
 ]]
-
 logsContentText.TextColor3 = Color3.new(1, 1, 1)
 logsContentText.Font = Enum.Font.Gotham
 logsContentText.TextSize = 14
@@ -892,7 +1038,7 @@ local editNote = Instance.new("TextLabel")
 editNote.Size = UDim2.new(0.9, 0, 0, 40)
 editNote.Position = UDim2.new(0.05, 0, 0, 440)
 editNote.BackgroundTransparency = 1
-editNote.Text = ""
+editNote.Text = " "
 editNote.TextColor3 = Color3.fromRGB(255, 150, 50)
 editNote.Font = Enum.Font.Gotham
 editNote.TextSize = 12
@@ -962,14 +1108,22 @@ minimize.MouseButton1Click:Connect(function()
 		if currentTab == "main" then
 			mainContent.Visible = true
 			settingsContent.Visible = false
+			creditsContent.Visible = false
 			logsContent.Visible = false
 		elseif currentTab == "settings" then
 			mainContent.Visible = false
 			settingsContent.Visible = true
+			creditsContent.Visible = false
+			logsContent.Visible = false
+		elseif currentTab == "credits" then
+			mainContent.Visible = false
+			settingsContent.Visible = false
+			creditsContent.Visible = true
 			logsContent.Visible = false
 		elseif currentTab == "logs" then
 			mainContent.Visible = false
 			settingsContent.Visible = false
+			creditsContent.Visible = false
 			logsContent.Visible = true
 		end
 	end
@@ -1017,5 +1171,3 @@ entryTween.Completed:Connect(function()
 		end
 	end
 end)
-
-

@@ -874,7 +874,7 @@ logsContentText.Text = [[Version 1.0:
 • Added Themes: Black (Default), Aqua and pink!
 • Added No Fog and Full Bright in Main Tab.
 • Improved Topbar (Icon).
-• Speed is now 100 to 120.
+• Maximum Speed increased 100 to 120.
 
 Thanks For Executing this script, I hope this is HUGE update for you :)
 ]]
@@ -1017,4 +1017,5 @@ entryTween.Completed:Connect(function()
 		end
 	end
 end)
+
 

@@ -644,7 +644,7 @@ local versionLabel = Instance.new("TextLabel")
 versionLabel.Size = UDim2.new(0.9, 0, 0, 25)
 versionLabel.Position = UDim2.new(0.05, 0, 0, 50)
 versionLabel.BackgroundTransparency = 1
-versionLabel.Text = "Version 1.1 - Latest Update"
+versionLabel.Text = "Version 1.2 - Latest Update"
 versionLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
 versionLabel.Font = Enum.Font.GothamBold
 versionLabel.TextSize = 16
@@ -666,7 +666,7 @@ local logsText = Instance.new("TextLabel")
 logsText.Size = UDim2.new(0.9, 0, 0, 200)
 logsText.Position = UDim2.new(0.05, 0, 0, 110)
 logsText.BackgroundTransparency = 1
-logsText.Text = "Update 1.1:\n• Added Credits tab.\n• Improved Topbar. \n Update 1.2:\n• Added key system. \n• Fixed entry animation bug. \nFixed Theme bug \nThanks for executing this script hope you have nice day :D"
+logsText.Text = "Update 1.1:\n• Added Credits tab.\n• Improved Topbar. \n Update 1.2:\n• Added key system. \n• Fixed entry animation bug. \n• Fixed Theme bug. \nThanks for executing this script hope you have nice day :D"
 logsText.TextColor3 = Color3.new(1, 1, 1)
 logsText.Font = Enum.Font.Gotham
 logsText.TextSize = 14
@@ -750,4 +750,5 @@ end
 
 -- Ensure only current tab is visible
 switchTab("main")
+
 

@@ -30,7 +30,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -120, 0, 40) -- Adjusted for icon
 title.Position = UDim2.new(0, 50, 0, 0) -- Moved right for icon
 title.BackgroundTransparency = 1
-title.Text = "Fredbear Hub | Version: 1.1"
+title.Text = "Fredbear Hub | Version: 1.12"
 title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 20
@@ -175,6 +175,70 @@ logsTabBtn.Parent = tabsContainer
 Instance.new("UICorner", logsTabBtn).CornerRadius = UDim.new(0, 8)
 
 -- =====================
+-- Hide/Show with RightShift (with cooldown)
+-- =====================
+local isHidden = false
+local canToggle = true
+local cooldownTime = 0.5 -- 0.5 second cooldown
+local originalPosition = frame.Position -- Center position
+local hiddenPosition = UDim2.new(0.5, -200, 1, 100) -- Down position (off-screen bottom)
+
+-- Function to hide GUI (move down)
+local function hideGUI()
+    if isHidden or not canToggle then return end
+    isHidden = true
+    
+    -- Start cooldown
+    canToggle = false
+    
+    -- Slide down to off-screen position
+    TweenService:Create(frame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Position = hiddenPosition
+    }):Play()
+    
+    -- Reset cooldown after animation
+    task.wait(cooldownTime)
+    canToggle = true
+end
+
+-- Function to show GUI (move to center)
+local function showGUI()
+    if not isHidden or not canToggle then return end
+    isHidden = false
+    
+    -- Start cooldown
+    canToggle = false
+    
+    -- Slide up to center position
+    TweenService:Create(frame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+        Position = originalPosition
+    }):Play()
+    
+    -- Reset cooldown after animation
+    task.wait(cooldownTime)
+    canToggle = true
+end
+
+-- Toggle hide/show
+local function toggleGUI()
+    if not canToggle then return end
+    
+    if isHidden then
+        showGUI()
+    else
+        hideGUI()
+    end
+end
+
+-- Connect RightShift key
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.RightShift and canToggle then
+        toggleGUI()
+    end
+end)
+
+
+-- =====================
 -- Tab Content Frames
 -- =====================
 local tabContent = Instance.new("Frame")
@@ -240,22 +304,194 @@ logsContent.Visible = false
 logsContent.Parent = tabContent
 
 -- =====================
--- Tab Switching
+-- Theme Colors
 -- =====================
+local themes = {
+    ["Black"] = {
+        frameColor = Color3.fromRGB(30, 30, 30),
+        buttonColor = Color3.fromRGB(50, 50, 50),
+        accentColor = Color3.fromRGB(0, 170, 255),
+        textColor = Color3.new(1, 1, 1),
+        sliderColor = Color3.fromRGB(50, 50, 50)
+    },
+    ["Aqua"] = {
+        frameColor = Color3.fromRGB(20, 40, 50),
+        buttonColor = Color3.fromRGB(30, 80, 100),
+        accentColor = Color3.fromRGB(0, 200, 255),
+        textColor = Color3.new(1, 1, 1),
+        sliderColor = Color3.fromRGB(30, 80, 100)
+    },
+    ["Pink"] = {
+        frameColor = Color3.fromRGB(50, 20, 40),
+        buttonColor = Color3.fromRGB(100, 30, 80),
+        accentColor = Color3.fromRGB(255, 100, 180),
+        textColor = Color3.new(1, 1, 1),
+        sliderColor = Color3.fromRGB(100, 30, 80)
+    }
+}
+
+local currentTheme = "Black"
 local currentTab = "main"
 
+-- Function to update tab colors based on current theme
+local function updateTabColors()
+    local theme = themes[currentTheme]
+    
+    if currentTab == "main" then
+        TweenService:Create(mainTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 1.2),
+                math.floor(theme.buttonColor.G * 255 * 1.2),
+                math.floor(theme.buttonColor.B * 255 * 1.2)
+            ),
+            TextColor3 = Color3.new(1, 1, 1)
+        }):Play()
+        
+        TweenService:Create(settingsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+        TweenService:Create(creditsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+        TweenService:Create(logsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+    elseif currentTab == "settings" then
+        TweenService:Create(mainTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+        TweenService:Create(settingsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 1.2),
+                math.floor(theme.buttonColor.G * 255 * 1.2),
+                math.floor(theme.buttonColor.B * 255 * 1.2)
+            ),
+            TextColor3 = Color3.new(1, 1, 1)
+        }):Play()
+        
+        TweenService:Create(creditsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+        TweenService:Create(logsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+    elseif currentTab == "credits" then
+        TweenService:Create(mainTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+        TweenService:Create(settingsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+        TweenService:Create(creditsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 1.2),
+                math.floor(theme.buttonColor.G * 255 * 1.2),
+                math.floor(theme.buttonColor.B * 255 * 1.2)
+            ),
+            TextColor3 = Color3.new(1, 1, 1)
+        }):Play()
+        
+        TweenService:Create(logsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+    elseif currentTab == "logs" then
+        TweenService:Create(mainTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+        TweenService:Create(settingsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+        TweenService:Create(creditsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 0.8),
+                math.floor(theme.buttonColor.G * 255 * 0.8),
+                math.floor(theme.buttonColor.B * 255 * 0.8)
+            ),
+            TextColor3 = Color3.new(0.7, 0.7, 0.7)
+        }):Play()
+        
+        TweenService:Create(logsTabBtn, TweenInfo.new(0.3), {
+            BackgroundColor3 = Color3.fromRGB(
+                math.floor(theme.buttonColor.R * 255 * 1.2),
+                math.floor(theme.buttonColor.G * 255 * 1.2),
+                math.floor(theme.buttonColor.B * 255 * 1.2)
+            ),
+            TextColor3 = Color3.new(1, 1, 1)
+        }):Play()
+    end
+end
+
+-- =====================
+-- Tab Switching
+-- =====================
 local function switchTab(tabName)
     currentTab = tabName
-    
-    -- Reset all tabs
-    mainTabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    mainTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
-    settingsTabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    settingsTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
-    creditsTabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    creditsTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
-    logsTabBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-    logsTabBtn.TextColor3 = Color3.new(0.7, 0.7, 0.7)
     
     mainContent.Visible = false
     settingsContent.Visible = false
@@ -264,22 +500,17 @@ local function switchTab(tabName)
     
     -- Activate selected tab
     if tabName == "main" then
-        mainTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        mainTabBtn.TextColor3 = Color3.new(1, 1, 1)
         mainContent.Visible = true
     elseif tabName == "settings" then
-        settingsTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        settingsTabBtn.TextColor3 = Color3.new(1, 1, 1)
         settingsContent.Visible = true
     elseif tabName == "credits" then
-        creditsTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        creditsTabBtn.TextColor3 = Color3.new(1, 1, 1)
         creditsContent.Visible = true
     elseif tabName == "logs" then
-        logsTabBtn.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-        logsTabBtn.TextColor3 = Color3.new(1, 1, 1)
         logsContent.Visible = true
     end
+    
+    -- Update tab colors with theme
+    updateTabColors()
 end
 
 mainTabBtn.MouseButton1Click:Connect(function()
@@ -402,7 +633,7 @@ handle.Parent = sliderFrame
 Instance.new("UICorner", handle).CornerRadius = UDim.new(0,8)
 
 local MIN_SPEED = 16
-local MAX_SPEED = 100
+local MAX_SPEED = 120
 local draggingSlider = false
 local currentSpeed = 16
 
@@ -638,30 +869,6 @@ currentThemeLabel.TextSize = 15
 currentThemeLabel.TextXAlignment = Enum.TextXAlignment.Left
 currentThemeLabel.Parent = settingsContainer
 
--- Theme Colors
-local themes = {
-    ["Black"] = {
-        frameColor = Color3.fromRGB(30, 30, 30),
-        buttonColor = Color3.fromRGB(50, 50, 50),
-        accentColor = Color3.fromRGB(0, 170, 255),
-        textColor = Color3.new(1, 1, 1)
-    },
-    ["Aqua"] = {
-        frameColor = Color3.fromRGB(20, 40, 50),
-        buttonColor = Color3.fromRGB(30, 80, 100),
-        accentColor = Color3.fromRGB(0, 200, 255),
-        textColor = Color3.new(1, 1, 1)
-    },
-    ["Pink"] = {
-        frameColor = Color3.fromRGB(50, 20, 40),
-        buttonColor = Color3.fromRGB(100, 30, 80),
-        accentColor = Color3.fromRGB(255, 100, 180),
-        textColor = Color3.new(1, 1, 1)
-    }
-}
-
-local currentTheme = "Black"
-
 -- =====================
 -- DROPDOWN THEME SELECTOR
 -- =====================
@@ -732,32 +939,10 @@ local function applyTheme(themeName)
         BackgroundColor3 = theme.frameColor
     }):Play()
     
-    -- Apply theme to buttons
+    -- Apply theme to all buttons
     for _, child in ipairs(frame:GetDescendants()) do
         if child:IsA("TextButton") then
-            if child == mainTabBtn or child == settingsTabBtn or child == creditsTabBtn or child == logsTabBtn then
-                -- Tab buttons
-                if (child == mainTabBtn and currentTab == "main") or 
-                   (child == settingsTabBtn and currentTab == "settings") or
-                   (child == creditsTabBtn and currentTab == "credits") or
-                   (child == logsTabBtn and currentTab == "logs") then
-                    TweenService:Create(child, TweenInfo.new(0.3), {
-                        BackgroundColor3 = Color3.fromRGB(
-                            math.floor(theme.buttonColor.R * 255 * 1.2),
-                            math.floor(theme.buttonColor.G * 255 * 1.2),
-                            math.floor(theme.buttonColor.B * 255 * 1.2)
-                        )
-                    }):Play()
-                else
-                    TweenService:Create(child, TweenInfo.new(0.3), {
-                        BackgroundColor3 = Color3.fromRGB(
-                            math.floor(theme.buttonColor.R * 255 * 0.8),
-                            math.floor(theme.buttonColor.G * 255 * 0.8),
-                            math.floor(theme.buttonColor.B * 255 * 0.8)
-                        )
-                    }):Play()
-                end
-            elseif child == exit then
+            if child == exit then
                 -- Exit button stays red
             elseif child == minimize then
                 -- Minimize button stays gray
@@ -766,8 +951,8 @@ local function applyTheme(themeName)
                 TweenService:Create(child, TweenInfo.new(0.3), {
                     BackgroundColor3 = theme.buttonColor
                 }):Play()
-            else
-                -- Regular buttons
+            elseif child == highlightBtn or child == resetBtn or child == fullBrightBtn or child == noFogBtn then
+                -- Main tab buttons
                 TweenService:Create(child, TweenInfo.new(0.3), {
                     BackgroundColor3 = theme.buttonColor
                 }):Play()
@@ -779,6 +964,11 @@ local function applyTheme(themeName)
         end
     end
     
+    -- Update slider frame color
+    TweenService:Create(sliderFrame, TweenInfo.new(0.3), {
+        BackgroundColor3 = theme.sliderColor
+    }):Play()
+    
     -- Update slider fill color
     TweenService:Create(fill, TweenInfo.new(0.3), {
         BackgroundColor3 = theme.accentColor
@@ -786,6 +976,9 @@ local function applyTheme(themeName)
     
     -- Update current theme label
     currentThemeLabel.Text = "Current Theme: " .. themeName
+    
+    -- Update tab colors
+    updateTabColors()
     
     -- Close dropdown after selection
     if dropdownOpen then
@@ -886,7 +1079,7 @@ local devName = Instance.new("TextLabel")
 devName.Size = UDim2.new(0.9, 0, 0, 40)
 devName.Position = UDim2.new(0.05, 0, 0, 95)
 devName.BackgroundTransparency = 1
-devName.Text = "Username: @Impro_rivalsplayer57 \nDisplay Name: Gojo" -- CHANGE THIS TO YOUR NAME
+devName.Text = "@Impro_rivalsplayer57 - Founder of this UI \nDeepseek Assistant - Scripter" -- CHANGE THIS TO YOUR NAME
 devName.TextColor3 = Color3.fromRGB(127, 255, 0)
 devName.Font = Enum.Font.Gotham
 devName.TextSize = 20
@@ -924,7 +1117,7 @@ local versionInfo = Instance.new("TextLabel")
 versionInfo.Size = UDim2.new(0.9, 0, 0, 60)
 versionInfo.Position = UDim2.new(0.05, 0, 0, 320)
 versionInfo.BackgroundTransparency = 1
-versionInfo.Text = "Fredbear Hub v1.1"
+versionInfo.Text = "Fredbear Hub v1.12\n Made by Gojo in Roblox with Deepseek Assistant"
 versionInfo.TextColor3 = Color3.new(0.7, 0.7, 0.7)
 versionInfo.Font = Enum.Font.Gotham
 versionInfo.TextSize = 14
@@ -987,7 +1180,7 @@ local versionLabel = Instance.new("TextLabel")
 versionLabel.Size = UDim2.new(0.9, 0, 0, 25)
 versionLabel.Position = UDim2.new(0.05, 0, 0, 50)
 versionLabel.BackgroundTransparency = 1
-versionLabel.Text = "Version 1.1 - Latest Update"
+versionLabel.Text = "Version 1.12 - Latest Update"
 versionLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
 versionLabel.Font = Enum.Font.GothamBold
 versionLabel.TextSize = 16
@@ -1020,9 +1213,19 @@ local logsContentText = Instance.new("TextLabel")
 logsContentText.Size = UDim2.new(0.9, 0, 0, 300)
 logsContentText.Position = UDim2.new(0.05, 0, 0, 125)
 logsContentText.BackgroundTransparency = 1
-logsContentText.Text = [[Update 1.1:
+logsContentText.Text = [[
+Update 1.0:
+• Added Tabs: Main, Settings and Logs.
+• Added Icon next to the title
+• Added Full Bright and No Fog
+Update 1.1:
 • Added Credits tab.
 • Improved Topbar.
+Update 1.12:
+• Themes bug fixes
+• Added toggle hide (for pc) Keyword is RightShift
+• Maximum speed is now 100 to 120
+
 Thanks for executing this script hope you have nice day :D
 ]]
 logsContentText.TextColor3 = Color3.new(1, 1, 1)

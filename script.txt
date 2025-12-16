@@ -5,7 +5,7 @@ local TweenService = game:GetService("TweenService")
 local Lighting = game:GetService("Lighting")
 local player = Players.LocalPlayer
 
--- Remove any existing GUI first
+-- Remove existing GUI
 if player:WaitForChild("PlayerGui"):FindFirstChild("FredbearHub") then
 	player:WaitForChild("PlayerGui").FredbearHub:Destroy()
 end
@@ -16,10 +16,10 @@ gui.Name = "FredbearHub"
 gui.ResetOnSpawn = false
 gui.Parent = player:WaitForChild("PlayerGui")
 
--- Main Frame (Increased for tabs)
+-- Main Frame
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 400, 0, 400) -- Increased height for tabs
-frame.Position = UDim2.new(0.5, -200, 0.5, -200) -- Center manually
+frame.Size = UDim2.new(0, 400, 0, 400)
+frame.Position = UDim2.new(0.5, -200, 0.5, -200)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.BorderSizePixel = 0
 frame.Parent = gui
@@ -27,22 +27,22 @@ Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 18)
 
 -- Title
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -120, 0, 40) -- Adjusted for icon
-title.Position = UDim2.new(0, 50, 0, 0) -- Moved right for icon
+title.Size = UDim2.new(1, -120, 0, 40)
+title.Position = UDim2.new(0, 50, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "Fredbear Hub | Version: 1.12"
+title.Text = "Fredbear Hub | Version: 1.1"
 title.TextColor3 = Color3.new(1,1,1)
 title.Font = Enum.Font.GothamBold
 title.TextSize = 20
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = frame
 
--- Icon next to title (Decal)
+-- Icon
 local icon = Instance.new("ImageLabel")
 icon.Size = UDim2.new(0, 32, 0, 32)
-icon.Position = UDim2.new(0, 10, 0, 4) -- Left of title
+icon.Position = UDim2.new(0, 10, 0, 4)
 icon.BackgroundTransparency = 1
-icon.Image = "rbxassetid://120545174495225" -- Your decal ID
+icon.Image = "rbxassetid://120545174495225"
 icon.ScaleType = Enum.ScaleType.Fit
 icon.Parent = frame
 
@@ -58,57 +58,30 @@ exit.TextSize = 18
 exit.Parent = frame
 Instance.new("UICorner", exit).CornerRadius = UDim.new(0, 10)
 
--- Exit with fade effect
 exit.MouseButton1Click:Connect(function()
-	-- Fade out all UI elements (text, buttons, images)
 	for _, child in ipairs(frame:GetDescendants()) do
 		if child:IsA("TextLabel") or child:IsA("TextButton") then
-			TweenService:Create(child, TweenInfo.new(0.3), {
-				TextTransparency = 1,
-				BackgroundTransparency = 1
-			}):Play()
+			TweenService:Create(child, TweenInfo.new(0.3), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
 		elseif child:IsA("ImageLabel") then
-			TweenService:Create(child, TweenInfo.new(0.3), {
-				ImageTransparency = 1,
-				BackgroundTransparency = 1
-			}):Play()
+			TweenService:Create(child, TweenInfo.new(0.3), {ImageTransparency = 1, BackgroundTransparency = 1}):Play()
 		elseif child:IsA("Frame") and child ~= frame then
-			TweenService:Create(child, TweenInfo.new(0.3), {
-				BackgroundTransparency = 1
-			}):Play()
+			TweenService:Create(child, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
 		end
 	end
-	
-	-- Wait a bit for fade to start
 	task.wait(0.2)
-	
-	-- Get current position and size
-	local currentPosition = frame.Position
-	local currentSize = frame.Size
-	
-	-- Shrink the entire frame upward to nothing
 	local shrinkTween = TweenService:Create(frame, TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
 		Size = UDim2.new(0, 0, 0, 0),
-		Position = UDim2.new(
-			currentPosition.X.Scale + (currentSize.X.Scale / 2),
-			currentPosition.X.Offset + (currentSize.X.Offset / 2),
-			currentPosition.Y.Scale + (currentSize.Y.Scale / 2),
-			currentPosition.Y.Offset + (currentSize.Y.Offset / 2)
-		),
+		Position = UDim2.new(0.5, 0, 0.5, 0),
 		BackgroundTransparency = 1
 	})
 	shrinkTween:Play()
-	
-	-- Destroy after animation
-	shrinkTween.Completed:Connect(function()
-		gui:Destroy()
-	end)
+	shrinkTween.Completed:Connect(function() gui:Destroy() end)
 end)
 
 -- Minimize Button
 local minimize = Instance.new("TextButton")
 minimize.Size = UDim2.new(0, 36, 0, 36)
-minimize.Position = UDim2.new(1, -84, 0, 2) -- next to exit
+minimize.Position = UDim2.new(1, -84, 0, 2)
 minimize.BackgroundColor3 = Color3.fromRGB(100,100,100)
 minimize.Text = "-"
 minimize.TextColor3 = Color3.new(1,1,1)
@@ -117,16 +90,14 @@ minimize.TextSize = 18
 minimize.Parent = frame
 Instance.new("UICorner", minimize).CornerRadius = UDim.new(0, 10)
 
--- =====================
 -- Tabs Container
--- =====================
 local tabsContainer = Instance.new("Frame")
 tabsContainer.Size = UDim2.new(1, -20, 0, 40)
 tabsContainer.Position = UDim2.new(0, 10, 0, 45)
 tabsContainer.BackgroundTransparency = 1
 tabsContainer.Parent = frame
 
--- Main Tab Button
+-- Tab Buttons
 local mainTabBtn = Instance.new("TextButton")
 mainTabBtn.Size = UDim2.new(0.22, 0, 1, 0)
 mainTabBtn.Position = UDim2.new(0, 0, 0, 0)
@@ -138,7 +109,6 @@ mainTabBtn.TextSize = 14
 mainTabBtn.Parent = tabsContainer
 Instance.new("UICorner", mainTabBtn).CornerRadius = UDim.new(0, 8)
 
--- Settings Tab Button
 local settingsTabBtn = Instance.new("TextButton")
 settingsTabBtn.Size = UDim2.new(0.22, 0, 1, 0)
 settingsTabBtn.Position = UDim2.new(0.24, 0, 0, 0)
@@ -150,7 +120,6 @@ settingsTabBtn.TextSize = 14
 settingsTabBtn.Parent = tabsContainer
 Instance.new("UICorner", settingsTabBtn).CornerRadius = UDim.new(0, 8)
 
--- Credits Tab Button
 local creditsTabBtn = Instance.new("TextButton")
 creditsTabBtn.Size = UDim2.new(0.22, 0, 1, 0)
 creditsTabBtn.Position = UDim2.new(0.48, 0, 0, 0)
@@ -162,7 +131,6 @@ creditsTabBtn.TextSize = 14
 creditsTabBtn.Parent = tabsContainer
 Instance.new("UICorner", creditsTabBtn).CornerRadius = UDim.new(0, 8)
 
--- Logs Tab Button
 local logsTabBtn = Instance.new("TextButton")
 logsTabBtn.Size = UDim2.new(0.22, 0, 1, 0)
 logsTabBtn.Position = UDim2.new(0.72, 0, 0, 0)
@@ -174,322 +142,72 @@ logsTabBtn.TextSize = 14
 logsTabBtn.Parent = tabsContainer
 Instance.new("UICorner", logsTabBtn).CornerRadius = UDim.new(0, 8)
 
--- =====================
--- Hide/Show with RightShift (with cooldown)
--- =====================
-local isHidden = false
-local canToggle = true
-local cooldownTime = 0.5 -- 0.5 second cooldown
-local originalPosition = frame.Position -- Center position
-local hiddenPosition = UDim2.new(0.5, -200, 1, 100) -- Down position (off-screen bottom)
-
--- Function to hide GUI (move down)
-local function hideGUI()
-    if isHidden or not canToggle then return end
-    isHidden = true
-    
-    -- Start cooldown
-    canToggle = false
-    
-    -- Slide down to off-screen position
-    TweenService:Create(frame, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        Position = hiddenPosition
-    }):Play()
-    
-    -- Reset cooldown after animation
-    task.wait(cooldownTime)
-    canToggle = true
-end
-
--- Function to show GUI (move to center)
-local function showGUI()
-    if not isHidden or not canToggle then return end
-    isHidden = false
-    
-    -- Start cooldown
-    canToggle = false
-    
-    -- Slide up to center position
-    TweenService:Create(frame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-        Position = originalPosition
-    }):Play()
-    
-    -- Reset cooldown after animation
-    task.wait(cooldownTime)
-    canToggle = true
-end
-
--- Toggle hide/show
-local function toggleGUI()
-    if not canToggle then return end
-    
-    if isHidden then
-        showGUI()
-    else
-        hideGUI()
-    end
-end
-
--- Connect RightShift key
-UserInputService.InputBegan:Connect(function(input)
-    if input.KeyCode == Enum.KeyCode.RightShift and canToggle then
-        toggleGUI()
-    end
-end)
-
-
--- =====================
--- Tab Content Frames
--- =====================
+-- Tab Content Area
 local tabContent = Instance.new("Frame")
 tabContent.Size = UDim2.new(1, 0, 1, -95)
 tabContent.Position = UDim2.new(0, 0, 0, 95)
 tabContent.BackgroundTransparency = 1
 tabContent.Parent = frame
 
--- Main Tab Content
-local mainContent = Instance.new("ScrollingFrame")
-mainContent.Name = "MainContent"
-mainContent.Size = UDim2.new(1, 0, 1, 0)
-mainContent.Position = UDim2.new(0, 0, 0, 0)
-mainContent.BackgroundTransparency = 1
-mainContent.BorderSizePixel = 0
-mainContent.ScrollBarThickness = 8
-mainContent.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
-mainContent.VerticalScrollBarInset = Enum.ScrollBarInset.Always
-mainContent.CanvasSize = UDim2.new(0, 0, 0, 0)
-mainContent.Visible = true
-mainContent.Parent = tabContent
+-- Scrolling Frames for Tabs
+local function createScrollingFrame(name)
+	local frame = Instance.new("ScrollingFrame")
+	frame.Name = name
+	frame.Size = UDim2.new(1, 0, 1, 0)
+	frame.Position = UDim2.new(0, 0, 0, 0)
+	frame.BackgroundTransparency = 1
+	frame.BorderSizePixel = 0
+	frame.ScrollBarThickness = 8
+	frame.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
+	frame.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+	frame.CanvasSize = UDim2.new(0, 0, 0, 0)
+	frame.Visible = false
+	frame.Parent = tabContent
+	return frame
+end
 
--- Settings Tab Content
-local settingsContent = Instance.new("ScrollingFrame")
-settingsContent.Name = "SettingsContent"
-settingsContent.Size = UDim2.new(1, 0, 1, 0)
-settingsContent.Position = UDim2.new(0, 0, 0, 0)
-settingsContent.BackgroundTransparency = 1
-settingsContent.BorderSizePixel = 0
-settingsContent.ScrollBarThickness = 8
-settingsContent.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
-settingsContent.VerticalScrollBarInset = Enum.ScrollBarInset.Always
-settingsContent.CanvasSize = UDim2.new(0, 0, 0, 0)
-settingsContent.Visible = false
-settingsContent.Parent = tabContent
+local mainContent = createScrollingFrame("MainContent")
+local settingsContent = createScrollingFrame("SettingsContent")
+local creditsContent = createScrollingFrame("CreditsContent")
+local logsContent = createScrollingFrame("LogsContent")
 
--- Credits Tab Content
-local creditsContent = Instance.new("ScrollingFrame")
-creditsContent.Name = "CreditsContent"
-creditsContent.Size = UDim2.new(1, 0, 1, 0)
-creditsContent.Position = UDim2.new(0, 0, 0, 0)
-creditsContent.BackgroundTransparency = 1
-creditsContent.BorderSizePixel = 0
-creditsContent.ScrollBarThickness = 8
-creditsContent.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
-creditsContent.VerticalScrollBarInset = Enum.ScrollBarInset.Always
-creditsContent.CanvasSize = UDim2.new(0, 0, 0, 0)
-creditsContent.Visible = false
-creditsContent.Parent = tabContent
-
--- Logs Tab Content
-local logsContent = Instance.new("ScrollingFrame")
-logsContent.Name = "LogsContent"
-logsContent.Size = UDim2.new(1, 0, 1, 0)
-logsContent.Position = UDim2.new(0, 0, 0, 0)
-logsContent.BackgroundTransparency = 1
-logsContent.BorderSizePixel = 0
-logsContent.ScrollBarThickness = 8
-logsContent.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 100)
-logsContent.VerticalScrollBarInset = Enum.ScrollBarInset.Always
-logsContent.CanvasSize = UDim2.new(0, 0, 0, 0)
-logsContent.Visible = false
-logsContent.Parent = tabContent
-
--- =====================
--- Theme Colors
--- =====================
+-- Themes
 local themes = {
-    ["Black"] = {
-        frameColor = Color3.fromRGB(30, 30, 30),
-        buttonColor = Color3.fromRGB(50, 50, 50),
-        accentColor = Color3.fromRGB(0, 170, 255),
-        textColor = Color3.new(1, 1, 1),
-        sliderColor = Color3.fromRGB(50, 50, 50)
-    },
-    ["Aqua"] = {
-        frameColor = Color3.fromRGB(20, 40, 50),
-        buttonColor = Color3.fromRGB(30, 80, 100),
-        accentColor = Color3.fromRGB(0, 200, 255),
-        textColor = Color3.new(1, 1, 1),
-        sliderColor = Color3.fromRGB(30, 80, 100)
-    },
-    ["Pink"] = {
-        frameColor = Color3.fromRGB(50, 20, 40),
-        buttonColor = Color3.fromRGB(100, 30, 80),
-        accentColor = Color3.fromRGB(255, 100, 180),
-        textColor = Color3.new(1, 1, 1),
-        sliderColor = Color3.fromRGB(100, 30, 80)
-    }
+    ["Black"] = {frameColor = Color3.fromRGB(30, 30, 30), buttonColor = Color3.fromRGB(50, 50, 50), accentColor = Color3.fromRGB(0, 170, 255), textColor = Color3.new(1, 1, 1), sliderColor = Color3.fromRGB(50, 50, 50)},
+    ["Aqua"] = {frameColor = Color3.fromRGB(20, 40, 50), buttonColor = Color3.fromRGB(30, 80, 100), accentColor = Color3.fromRGB(0, 200, 255), textColor = Color3.new(1, 1, 1), sliderColor = Color3.fromRGB(30, 80, 100)},
+    ["Pink"] = {frameColor = Color3.fromRGB(50, 20, 40), buttonColor = Color3.fromRGB(100, 30, 80), accentColor = Color3.fromRGB(255, 100, 180), textColor = Color3.new(1, 1, 1), sliderColor = Color3.fromRGB(100, 30, 80)}
 }
 
 local currentTheme = "Black"
 local currentTab = "main"
 
--- Function to update tab colors based on current theme
+-- Update Tab Colors
 local function updateTabColors()
     local theme = themes[currentTheme]
+    local buttons = {mainTabBtn, settingsTabBtn, creditsTabBtn, logsTabBtn}
     
-    if currentTab == "main" then
-        TweenService:Create(mainTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
+    for i, btn in ipairs(buttons) do
+        local isActive = (i == 1 and currentTab == "main") or 
+                        (i == 2 and currentTab == "settings") or 
+                        (i == 3 and currentTab == "credits") or 
+                        (i == 4 and currentTab == "logs")
+        
+        TweenService:Create(btn, TweenInfo.new(0.3), {
+            BackgroundColor3 = isActive and Color3.fromRGB(
                 math.floor(theme.buttonColor.R * 255 * 1.2),
                 math.floor(theme.buttonColor.G * 255 * 1.2),
                 math.floor(theme.buttonColor.B * 255 * 1.2)
-            ),
-            TextColor3 = Color3.new(1, 1, 1)
-        }):Play()
-        
-        TweenService:Create(settingsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
+            ) or Color3.fromRGB(
                 math.floor(theme.buttonColor.R * 255 * 0.8),
                 math.floor(theme.buttonColor.G * 255 * 0.8),
                 math.floor(theme.buttonColor.B * 255 * 0.8)
             ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-        TweenService:Create(creditsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-        TweenService:Create(logsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-    elseif currentTab == "settings" then
-        TweenService:Create(mainTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-        TweenService:Create(settingsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 1.2),
-                math.floor(theme.buttonColor.G * 255 * 1.2),
-                math.floor(theme.buttonColor.B * 255 * 1.2)
-            ),
-            TextColor3 = Color3.new(1, 1, 1)
-        }):Play()
-        
-        TweenService:Create(creditsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-        TweenService:Create(logsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-    elseif currentTab == "credits" then
-        TweenService:Create(mainTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-        TweenService:Create(settingsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-        TweenService:Create(creditsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 1.2),
-                math.floor(theme.buttonColor.G * 255 * 1.2),
-                math.floor(theme.buttonColor.B * 255 * 1.2)
-            ),
-            TextColor3 = Color3.new(1, 1, 1)
-        }):Play()
-        
-        TweenService:Create(logsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-    elseif currentTab == "logs" then
-        TweenService:Create(mainTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-        TweenService:Create(settingsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-        TweenService:Create(creditsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 0.8),
-                math.floor(theme.buttonColor.G * 255 * 0.8),
-                math.floor(theme.buttonColor.B * 255 * 0.8)
-            ),
-            TextColor3 = Color3.new(0.7, 0.7, 0.7)
-        }):Play()
-        
-        TweenService:Create(logsTabBtn, TweenInfo.new(0.3), {
-            BackgroundColor3 = Color3.fromRGB(
-                math.floor(theme.buttonColor.R * 255 * 1.2),
-                math.floor(theme.buttonColor.G * 255 * 1.2),
-                math.floor(theme.buttonColor.B * 255 * 1.2)
-            ),
-            TextColor3 = Color3.new(1, 1, 1)
+            TextColor3 = isActive and Color3.new(1, 1, 1) or Color3.new(0.7, 0.7, 0.7)
         }):Play()
     end
 end
 
--- =====================
 -- Tab Switching
--- =====================
 local function switchTab(tabName)
     currentTab = tabName
     
@@ -498,7 +216,6 @@ local function switchTab(tabName)
     creditsContent.Visible = false
     logsContent.Visible = false
     
-    -- Activate selected tab
     if tabName == "main" then
         mainContent.Visible = true
     elseif tabName == "settings" then
@@ -509,37 +226,22 @@ local function switchTab(tabName)
         logsContent.Visible = true
     end
     
-    -- Update tab colors with theme
     updateTabColors()
 end
 
-mainTabBtn.MouseButton1Click:Connect(function()
-    switchTab("main")
-end)
+mainTabBtn.MouseButton1Click:Connect(function() switchTab("main") end)
+settingsTabBtn.MouseButton1Click:Connect(function() switchTab("settings") end)
+creditsTabBtn.MouseButton1Click:Connect(function() switchTab("credits") end)
+logsTabBtn.MouseButton1Click:Connect(function() switchTab("logs") end)
 
-settingsTabBtn.MouseButton1Click:Connect(function()
-    switchTab("settings")
-end)
-
-creditsTabBtn.MouseButton1Click:Connect(function()
-    switchTab("credits")
-end)
-
-logsTabBtn.MouseButton1Click:Connect(function()
-    switchTab("logs")
-end)
-
--- =====================
 -- MAIN TAB CONTENT
--- =====================
 local mainContainer = Instance.new("Frame")
 mainContainer.Name = "MainContainer"
 mainContainer.Size = UDim2.new(1, 0, 0, 0)
 mainContainer.BackgroundTransparency = 1
 mainContainer.Parent = mainContent
 
--- Function to update main canvas size
-local function updateMainCanvasSize()
+local function updateMainCanvas()
     local totalHeight = 0
     for _, child in ipairs(mainContainer:GetChildren()) do
         if child:IsA("GuiObject") then
@@ -550,13 +252,11 @@ local function updateMainCanvasSize()
     mainContainer.Size = UDim2.new(1, 0, 0, totalHeight)
 end
 
--- =====================
--- Highlight Button (MAIN TAB)
--- =====================
+-- Highlight Button
 local highlightBtn = Instance.new("TextButton")
 highlightBtn.Size = UDim2.new(0.9, 0, 0, 40)
 highlightBtn.Position = UDim2.new(0.05, 0, 0, 0)
-highlightBtn.BackgroundColor3 = Color3.fromRGB(50,50,50)
+highlightBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 highlightBtn.Text = "Highlight Animatronics: OFF"
 highlightBtn.TextColor3 = Color3.new(1,1,1)
 highlightBtn.Font = Enum.Font.Gotham
@@ -565,41 +265,32 @@ highlightBtn.Parent = mainContainer
 Instance.new("UICorner", highlightBtn).CornerRadius = UDim.new(0, 12)
 
 local highlightEnabled = false
-
-local function applyHighlight(model)
-	if not model or model:FindFirstChild("AnimHighlight") then return end
-	local h = Instance.new("Highlight")
-	h.Name = "AnimHighlight"
-	h.FillTransparency = 0.8
-	h.FillColor = Color3.new(1, 1, 1)
-	h.OutlineColor = Color3.new(1, 1, 1)
-	h.OutlineTransparency = 0
-	h.Adornee = model
-	h.Parent = model
-end
-
-local function removeHighlight(model)
-	if not model then return end
-	local h = model:FindFirstChild("AnimHighlight")
-	if h then h:Destroy() end
-end
-
-highlightBtn.MouseButton1Click:Connect(function()
+local function toggleHighlight()
 	highlightEnabled = not highlightEnabled
-	if highlightEnabled then
-		highlightBtn.Text = "Highlight Animatronics: ON"
-		applyHighlight(workspace:FindFirstChild("FredBear"))
-		applyHighlight(workspace:FindFirstChild("SpringBonnie"))
-	else
-		highlightBtn.Text = "Highlight Animatronics: OFF"
-		removeHighlight(workspace:FindFirstChild("FredBear"))
-		removeHighlight(workspace:FindFirstChild("SpringBonnie"))
+	highlightBtn.Text = "Highlight Animatronics: " .. (highlightEnabled and "ON" or "OFF")
+	
+	for _, name in ipairs({"FredBear", "SpringBonnie"}) do
+		local model = workspace:FindFirstChild(name)
+		if model then
+			local h = model:FindFirstChild("AnimHighlight")
+			if highlightEnabled and not h then
+				h = Instance.new("Highlight")
+				h.Name = "AnimHighlight"
+				h.FillTransparency = 0.8
+				h.FillColor = Color3.new(1, 1, 1)
+				h.OutlineColor = Color3.new(1, 1, 1)
+				h.OutlineTransparency = 0
+				h.Adornee = model
+				h.Parent = model
+			elseif not highlightEnabled and h then
+				h:Destroy()
+			end
+		end
 	end
-end)
+end
+highlightBtn.MouseButton1Click:Connect(toggleHighlight)
 
--- =====================
--- Speed Slider (MAIN TAB)
--- =====================
+-- Speed Slider
 local speedLabel = Instance.new("TextLabel")
 speedLabel.Size = UDim2.new(0.9, 0, 0, 25)
 speedLabel.Position = UDim2.new(0.05,0,0,50)
@@ -632,10 +323,8 @@ handle.BackgroundColor3 = Color3.fromRGB(255,255,255)
 handle.Parent = sliderFrame
 Instance.new("UICorner", handle).CornerRadius = UDim.new(0,8)
 
-local MIN_SPEED = 16
-local MAX_SPEED = 120
-local draggingSlider = false
-local currentSpeed = 16
+local MIN_SPEED, MAX_SPEED = 16, 100
+local draggingSlider, currentSpeed = false, 16
 
 local function updateSpeedFromPos(x)
 	x = math.clamp(x, 0, sliderFrame.AbsoluteSize.X)
@@ -644,17 +333,14 @@ local function updateSpeedFromPos(x)
 	fill.Size = UDim2.new(0,x,1,0)
 	handle.Position = UDim2.new(0,x,0.5,0)
 	local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
-	if hum then
-		hum.WalkSpeed = speed
-	end
+	if hum then hum.WalkSpeed = speed end
 	speedLabel.Text = "Speed Adjuster: "..speed
 end
 
 sliderFrame.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		draggingSlider = true
-		local pos = input.Position.X - sliderFrame.AbsolutePosition.X
-		updateSpeedFromPos(pos)
+		updateSpeedFromPos(input.Position.X - sliderFrame.AbsolutePosition.X)
 	end
 end)
 sliderFrame.InputEnded:Connect(function(input)
@@ -664,12 +350,11 @@ sliderFrame.InputEnded:Connect(function(input)
 end)
 UserInputService.InputChanged:Connect(function(input)
 	if draggingSlider and input.UserInputType == Enum.UserInputType.MouseMovement then
-		local pos = input.Position.X - sliderFrame.AbsolutePosition.X
-		updateSpeedFromPos(pos)
+		updateSpeedFromPos(input.Position.X - sliderFrame.AbsolutePosition.X)
 	end
 end)
 
--- Reset Speed Button (MAIN TAB)
+-- Reset Speed Button
 local resetBtn = Instance.new("TextButton")
 resetBtn.Size = UDim2.new(0.9,0,0,36)
 resetBtn.Position = UDim2.new(0.05,0,0,115)
@@ -686,7 +371,6 @@ resetBtn.MouseButton1Click:Connect(function()
 	updateSpeedFromPos(0)
 end)
 
--- Update speed on respawn
 local function applySpeedOnRespawn()
 	local hum = player.Character and player.Character:FindFirstChildOfClass("Humanoid")
 	if hum then
@@ -697,14 +381,9 @@ local function applySpeedOnRespawn()
 		speedLabel.Text = "Speed Adjuster: "..currentSpeed
 	end
 end
-player.CharacterAdded:Connect(function()
-	task.wait(0.2)
-	applySpeedOnRespawn()
-end)
+player.CharacterAdded:Connect(function() task.wait(0.2); applySpeedOnRespawn() end)
 
--- =====================
--- Full Bright Button (MAIN TAB)
--- =====================
+-- Full Bright Button
 local fullBrightBtn = Instance.new("TextButton")
 fullBrightBtn.Size = UDim2.new(0.9, 0, 0, 36)
 fullBrightBtn.Position = UDim2.new(0.05, 0, 0, 165)
@@ -717,58 +396,31 @@ fullBrightBtn.Parent = mainContainer
 Instance.new("UICorner", fullBrightBtn).CornerRadius = UDim.new(0, 12)
 
 local fullBrightEnabled = false
-
-local function enableFullBright()
-    -- Make everything bright
-    Lighting.Brightness = 3
-    Lighting.Ambient = Color3.new(1, 1, 1)
-    Lighting.OutdoorAmbient = Color3.new(1, 1, 1)
-    Lighting.ColorShift_Top = Color3.new(0, 0, 0)
-    Lighting.ColorShift_Bottom = Color3.new(0, 0, 0)
-    Lighting.ExposureCompensation = 1
-    
-    -- Create and apply Bloom effect for extra brightness
-    local bloom = Instance.new("BloomEffect")
-    bloom.Name = "FullBrightBloom"
-    bloom.Intensity = 0.5
-    bloom.Threshold = 0.8
-    bloom.Size = 24
-    bloom.Parent = Lighting
-    
-    fullBrightBtn.Text = "Full Bright: ON"
-    fullBrightEnabled = true
+local function toggleFullBright()
+	fullBrightEnabled = not fullBrightEnabled
+	if fullBrightEnabled then
+		Lighting.Brightness = 3
+		Lighting.Ambient = Color3.new(1, 1, 1)
+		Lighting.OutdoorAmbient = Color3.new(1, 1, 1)
+		local bloom = Lighting:FindFirstChild("FullBrightBloom") or Instance.new("BloomEffect")
+		bloom.Name = "FullBrightBloom"
+		bloom.Intensity = 0.5
+		bloom.Threshold = 0.8
+		bloom.Size = 24
+		bloom.Parent = Lighting
+		fullBrightBtn.Text = "Full Bright: ON"
+	else
+		Lighting.Brightness = 1
+		Lighting.Ambient = Color3.fromRGB(128, 128, 128)
+		Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
+		local bloom = Lighting:FindFirstChild("FullBrightBloom")
+		if bloom then bloom:Destroy() end
+		fullBrightBtn.Text = "Full Bright: OFF"
+	end
 end
+fullBrightBtn.MouseButton1Click:Connect(toggleFullBright)
 
-local function disableFullBright()
-    -- Reset to default lighting
-    Lighting.Brightness = 1
-    Lighting.Ambient = Color3.fromRGB(128, 128, 128)
-    Lighting.OutdoorAmbient = Color3.fromRGB(128, 128, 128)
-    Lighting.ColorShift_Top = Color3.new(0, 0, 0)
-    Lighting.ColorShift_Bottom = Color3.new(0, 0, 0)
-    Lighting.ExposureCompensation = 0
-    
-    -- Remove bloom effect
-    local bloom = Lighting:FindFirstChild("FullBrightBloom")
-    if bloom then
-        bloom:Destroy()
-    end
-    
-    fullBrightBtn.Text = "Full Bright: OFF"
-    fullBrightEnabled = false
-end
-
-fullBrightBtn.MouseButton1Click:Connect(function()
-    if fullBrightEnabled then
-        disableFullBright()
-    else
-        enableFullBright()
-    end
-end)
-
--- =====================
--- No Fog Button (MAIN TAB)
--- =====================
+-- No Fog Button
 local noFogBtn = Instance.new("TextButton")
 noFogBtn.Size = UDim2.new(0.9, 0, 0, 36)
 noFogBtn.Position = UDim2.new(0.05, 0, 0, 215)
@@ -781,47 +433,30 @@ noFogBtn.Parent = mainContainer
 Instance.new("UICorner", noFogBtn).CornerRadius = UDim.new(0, 12)
 
 local noFogEnabled = false
-
-local function enableNoFog()
-    -- Disable fog
-    Lighting.FogStart = 999999
-    Lighting.FogEnd = 1000000
-    
-    noFogBtn.Text = "No Fog: ON"
-    noFogEnabled = true
+local function toggleNoFog()
+	noFogEnabled = not noFogEnabled
+	if noFogEnabled then
+		Lighting.FogStart = 999999
+		Lighting.FogEnd = 1000000
+		noFogBtn.Text = "No Fog: ON"
+	else
+		Lighting.FogStart = 0
+		Lighting.FogEnd = 100000
+		noFogBtn.Text = "No Fog: OFF"
+	end
 end
+noFogBtn.MouseButton1Click:Connect(toggleNoFog)
 
-local function disableNoFog()
-    -- Reset fog to default
-    Lighting.FogStart = 0
-    Lighting.FogEnd = 100000
-    
-    noFogBtn.Text = "No Fog: OFF"
-    noFogEnabled = false
-end
+updateMainCanvas()
 
-noFogBtn.MouseButton1Click:Connect(function()
-    if noFogEnabled then
-        disableNoFog()
-    else
-        enableNoFog()
-    end
-end)
-
--- Update main canvas size
-updateMainCanvasSize()
-
--- =====================
 -- SETTINGS TAB CONTENT
--- =====================
 local settingsContainer = Instance.new("Frame")
 settingsContainer.Name = "SettingsContainer"
 settingsContainer.Size = UDim2.new(1, 0, 0, 0)
 settingsContainer.BackgroundTransparency = 1
 settingsContainer.Parent = settingsContent
 
--- Function to update settings canvas size
-local function updateSettingsCanvasSize()
+local function updateSettingsCanvas()
     local totalHeight = 0
     for _, child in ipairs(settingsContainer:GetChildren()) do
         if child:IsA("GuiObject") then
@@ -832,7 +467,7 @@ local function updateSettingsCanvasSize()
     settingsContainer.Size = UDim2.new(1, 0, 0, totalHeight)
 end
 
--- Theme Settings Label
+-- Theme Selector
 local themeLabel = Instance.new("TextLabel")
 themeLabel.Size = UDim2.new(0.9, 0, 0, 30)
 themeLabel.Position = UDim2.new(0.05, 0, 0, 0)
@@ -844,23 +479,9 @@ themeLabel.TextSize = 18
 themeLabel.TextXAlignment = Enum.TextXAlignment.Left
 themeLabel.Parent = settingsContainer
 
--- Theme Description
-local themeDesc = Instance.new("TextLabel")
-themeDesc.Size = UDim2.new(0.9, 0, 0, 40)
-themeDesc.Position = UDim2.new(0.05, 0, 0, 35)
-themeDesc.BackgroundTransparency = 1
-themeDesc.Text = "Choose your preferred theme color:"
-themeDesc.TextColor3 = Color3.new(0.8, 0.8, 0.8)
-themeDesc.Font = Enum.Font.Gotham
-themeDesc.TextSize = 14
-themeDesc.TextXAlignment = Enum.TextXAlignment.Left
-themeDesc.TextWrapped = true
-themeDesc.Parent = settingsContainer
-
--- Current Theme Display
 local currentThemeLabel = Instance.new("TextLabel")
 currentThemeLabel.Size = UDim2.new(0.9, 0, 0, 25)
-currentThemeLabel.Position = UDim2.new(0.05, 0, 0, 85)
+currentThemeLabel.Position = UDim2.new(0.05, 0, 0, 40)
 currentThemeLabel.BackgroundTransparency = 1
 currentThemeLabel.Text = "Current Theme: Black"
 currentThemeLabel.TextColor3 = Color3.new(1, 1, 1)
@@ -869,177 +490,68 @@ currentThemeLabel.TextSize = 15
 currentThemeLabel.TextXAlignment = Enum.TextXAlignment.Left
 currentThemeLabel.Parent = settingsContainer
 
--- =====================
--- DROPDOWN THEME SELECTOR
--- =====================
-
--- Dropdown Main Button
-local dropdownButton = Instance.new("TextButton")
-dropdownButton.Size = UDim2.new(0.9, 0, 0, 40)
-dropdownButton.Position = UDim2.new(0.05, 0, 0, 125)
-dropdownButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-dropdownButton.Text = "Select Theme ▼"
-dropdownButton.TextColor3 = Color3.new(1, 1, 1)
-dropdownButton.Font = Enum.Font.Gotham
-dropdownButton.TextSize = 15
-dropdownButton.Parent = settingsContainer
-Instance.new("UICorner", dropdownButton).CornerRadius = UDim.new(0, 12)
-
--- Dropdown Options Frame (Hidden by default)
-local dropdownFrame = Instance.new("Frame")
-dropdownFrame.Name = "ThemeDropdown"
-dropdownFrame.Size = UDim2.new(0.9, 0, 0, 0) -- Start collapsed
-dropdownFrame.Position = UDim2.new(0.05, 0, 0, 170)
-dropdownFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-dropdownFrame.ClipsDescendants = true
-dropdownFrame.Parent = settingsContainer
-Instance.new("UICorner", dropdownFrame).CornerRadius = UDim.new(0, 12)
-
--- Dropdown Options Container
-local dropdownContent = Instance.new("Frame")
-dropdownContent.Name = "DropdownContent"
-dropdownContent.Size = UDim2.new(1, 0, 0, 0)
-dropdownContent.BackgroundTransparency = 1
-dropdownContent.Parent = dropdownFrame
-
-local dropdownOpen = false
-
--- Function to toggle dropdown
-local function toggleDropdown()
-    dropdownOpen = not dropdownOpen
-    
-    if dropdownOpen then
-        -- Open dropdown
-        dropdownButton.Text = "Select Theme ▲"
-        TweenService:Create(dropdownFrame, TweenInfo.new(0.3), {
-            Size = UDim2.new(0.9, 0, 0, 138) -- 36 * 3 + 30 margin
-        }):Play()
-        TweenService:Create(dropdownContent, TweenInfo.new(0.3), {
-            Size = UDim2.new(1, 0, 0, 138)
-        }):Play()
-    else
-        -- Close dropdown
-        dropdownButton.Text = "Select Theme ▼"
-        TweenService:Create(dropdownFrame, TweenInfo.new(0.3), {
-            Size = UDim2.new(0.9, 0, 0, 0)
-        }):Play()
-        TweenService:Create(dropdownContent, TweenInfo.new(0.3), {
-            Size = UDim2.new(1, 0, 0, 0)
-        }):Play()
-    end
+-- Theme Buttons
+local themeButtons = {}
+local function createThemeButton(themeName, yPos)
+	local btn = Instance.new("TextButton")
+	btn.Size = UDim2.new(0.9, 0, 0, 40)
+	btn.Position = UDim2.new(0.05, 0, 0, yPos)
+	btn.BackgroundColor3 = themes[themeName].buttonColor
+	btn.Text = themeName
+	btn.TextColor3 = Color3.new(1, 1, 1)
+	btn.Font = Enum.Font.Gotham
+	btn.TextSize = 15
+	btn.Parent = settingsContainer
+	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 12)
+	
+	if themeName == currentTheme then
+		btn.BackgroundColor3 = themes[themeName].accentColor
+	end
+	
+	btn.MouseButton1Click:Connect(function()
+		currentTheme = themeName
+		local theme = themes[themeName]
+		
+		TweenService:Create(frame, TweenInfo.new(0.3), {BackgroundColor3 = theme.frameColor}):Play()
+		TweenService:Create(sliderFrame, TweenInfo.new(0.3), {BackgroundColor3 = theme.sliderColor}):Play()
+		TweenService:Create(fill, TweenInfo.new(0.3), {BackgroundColor3 = theme.accentColor}):Play()
+		
+		for _, button in ipairs({highlightBtn, resetBtn, fullBrightBtn, noFogBtn}) do
+			if button then
+				TweenService:Create(button, TweenInfo.new(0.3), {BackgroundColor3 = theme.buttonColor}):Play()
+			end
+		end
+		
+		currentThemeLabel.Text = "Current Theme: " .. themeName
+		updateTabColors()
+		
+		for name, tbtn in pairs(themeButtons) do
+			if name == themeName then
+				tbtn.BackgroundColor3 = theme.accentColor
+			else
+				tbtn.BackgroundColor3 = themes[name].buttonColor
+			end
+		end
+	end)
+	
+	themeButtons[themeName] = btn
+	return btn
 end
 
--- Function to apply theme
-local function applyTheme(themeName)
-    currentTheme = themeName
-    local theme = themes[themeName]
-    
-    -- Apply theme to frame
-    TweenService:Create(frame, TweenInfo.new(0.3), {
-        BackgroundColor3 = theme.frameColor
-    }):Play()
-    
-    -- Apply theme to all buttons
-    for _, child in ipairs(frame:GetDescendants()) do
-        if child:IsA("TextButton") then
-            if child == exit then
-                -- Exit button stays red
-            elseif child == minimize then
-                -- Minimize button stays gray
-            elseif child == dropdownButton then
-                -- Dropdown button gets theme color
-                TweenService:Create(child, TweenInfo.new(0.3), {
-                    BackgroundColor3 = theme.buttonColor
-                }):Play()
-            elseif child == highlightBtn or child == resetBtn or child == fullBrightBtn or child == noFogBtn then
-                -- Main tab buttons
-                TweenService:Create(child, TweenInfo.new(0.3), {
-                    BackgroundColor3 = theme.buttonColor
-                }):Play()
-            end
-        elseif child:IsA("TextLabel") and child ~= title then
-            TweenService:Create(child, TweenInfo.new(0.3), {
-                TextColor3 = theme.textColor
-            }):Play()
-        end
-    end
-    
-    -- Update slider frame color
-    TweenService:Create(sliderFrame, TweenInfo.new(0.3), {
-        BackgroundColor3 = theme.sliderColor
-    }):Play()
-    
-    -- Update slider fill color
-    TweenService:Create(fill, TweenInfo.new(0.3), {
-        BackgroundColor3 = theme.accentColor
-    }):Play()
-    
-    -- Update current theme label
-    currentThemeLabel.Text = "Current Theme: " .. themeName
-    
-    -- Update tab colors
-    updateTabColors()
-    
-    -- Close dropdown after selection
-    if dropdownOpen then
-        toggleDropdown()
-    end
-end
+createThemeButton("Black", 75)
+createThemeButton("Aqua", 125)
+createThemeButton("Pink", 175)
 
--- Create theme option buttons inside dropdown
-local optionY = 10
-for themeName, themeData in pairs(themes) do
-    local optionButton = Instance.new("TextButton")
-    optionButton.Size = UDim2.new(0.9, 0, 0, 36)
-    optionButton.Position = UDim2.new(0.05, 0, 0, optionY)
-    optionButton.BackgroundColor3 = themeData.buttonColor
-    optionButton.Text = themeName
-    optionButton.TextColor3 = Color3.new(1, 1, 1)
-    optionButton.Font = Enum.Font.Gotham
-    optionButton.TextSize = 15
-    optionButton.Parent = dropdownContent
-    Instance.new("UICorner", optionButton).CornerRadius = UDim.new(0, 8)
-    
-    -- Highlight current theme
-    if themeName == currentTheme then
-        optionButton.BackgroundColor3 = themeData.accentColor
-    end
-    
-    optionButton.MouseButton1Click:Connect(function()
-        applyTheme(themeName)
-        -- Update all option buttons
-        for _, child in ipairs(dropdownContent:GetChildren()) do
-            if child:IsA("TextButton") then
-                local btnThemeName = child.Text
-                if btnThemeName == themeName then
-                    child.BackgroundColor3 = themes[btnThemeName].accentColor
-                else
-                    child.BackgroundColor3 = themes[btnThemeName].buttonColor
-                end
-            end
-        end
-    end)
-    
-    optionY = optionY + 42
-end
+updateSettingsCanvas()
 
--- Connect dropdown button
-dropdownButton.MouseButton1Click:Connect(toggleDropdown)
-
--- Update settings canvas size
-updateSettingsCanvasSize()
-
--- =====================
 -- CREDITS TAB CONTENT
--- =====================
 local creditsContainer = Instance.new("Frame")
 creditsContainer.Name = "CreditsContainer"
 creditsContainer.Size = UDim2.new(1, 0, 0, 0)
 creditsContainer.BackgroundTransparency = 1
 creditsContainer.Parent = creditsContent
 
--- Function to update credits canvas size
-local function updateCreditsCanvasSize()
+local function updateCreditsCanvas()
     local totalHeight = 0
     for _, child in ipairs(creditsContainer:GetChildren()) do
         if child:IsA("GuiObject") then
@@ -1050,7 +562,6 @@ local function updateCreditsCanvasSize()
     creditsContainer.Size = UDim2.new(1, 0, 0, totalHeight)
 end
 
--- Credits Title
 local creditsTitle = Instance.new("TextLabel")
 creditsTitle.Size = UDim2.new(0.9, 0, 0, 50)
 creditsTitle.Position = UDim2.new(0.05, 0, 0, 0)
@@ -1062,31 +573,18 @@ creditsTitle.TextSize = 24
 creditsTitle.TextXAlignment = Enum.TextXAlignment.Center
 creditsTitle.Parent = creditsContainer
 
--- Developer Label
-local devLabel = Instance.new("TextLabel")
-devLabel.Size = UDim2.new(0.9, 0, 0, 30)
-devLabel.Position = UDim2.new(0.05, 0, 0, 60)
-devLabel.BackgroundTransparency = 1
-devLabel.Text = "Developer"
-devLabel.TextColor3 = Color3.new(1, 1, 1)
-devLabel.Font = Enum.Font.GothamBold
-devLabel.TextSize = 18
-devLabel.TextXAlignment = Enum.TextXAlignment.Center
-devLabel.Parent = creditsContainer
-
--- Developer Name (Change this to your name)
 local devName = Instance.new("TextLabel")
-devName.Size = UDim2.new(0.9, 0, 0, 40)
-devName.Position = UDim2.new(0.05, 0, 0, 95)
+devName.Size = UDim2.new(0.9, 0, 0, 80)
+devName.Position = UDim2.new(0.05, 0, 0, 60)
 devName.BackgroundTransparency = 1
-devName.Text = "@Impro_rivalsplayer57 - Founder of this UI \nDeepseek Assistant - Scripter" -- CHANGE THIS TO YOUR NAME
+devName.Text = "Developer:\n@Impro_rivalsplayer57\nDisplay Name: Gojo"
 devName.TextColor3 = Color3.fromRGB(127, 255, 0)
 devName.Font = Enum.Font.Gotham
 devName.TextSize = 20
 devName.TextXAlignment = Enum.TextXAlignment.Center
+devName.TextWrapped = true
 devName.Parent = creditsContainer
 
--- Special Thanks Label
 local thanksLabel = Instance.new("TextLabel")
 thanksLabel.Size = UDim2.new(0.9, 0, 0, 30)
 thanksLabel.Position = UDim2.new(0.05, 0, 0, 150)
@@ -1098,7 +596,6 @@ thanksLabel.TextSize = 18
 thanksLabel.TextXAlignment = Enum.TextXAlignment.Center
 thanksLabel.Parent = creditsContainer
 
--- Special Thanks Content
 local thanksContent = Instance.new("TextLabel")
 thanksContent.Size = UDim2.new(0.9, 0, 0, 120)
 thanksContent.Position = UDim2.new(0.05, 0, 0, 185)
@@ -1112,47 +609,16 @@ thanksContent.TextYAlignment = Enum.TextYAlignment.Top
 thanksContent.TextWrapped = true
 thanksContent.Parent = creditsContainer
 
--- Version Info
-local versionInfo = Instance.new("TextLabel")
-versionInfo.Size = UDim2.new(0.9, 0, 0, 60)
-versionInfo.Position = UDim2.new(0.05, 0, 0, 320)
-versionInfo.BackgroundTransparency = 1
-versionInfo.Text = "Fredbear Hub v1.12\n Made by Gojo in Roblox with Deepseek Assistant"
-versionInfo.TextColor3 = Color3.new(0.7, 0.7, 0.7)
-versionInfo.Font = Enum.Font.Gotham
-versionInfo.TextSize = 14
-versionInfo.TextXAlignment = Enum.TextXAlignment.Center
-versionInfo.TextYAlignment = Enum.TextYAlignment.Top
-versionInfo.TextWrapped = true
-versionInfo.Parent = creditsContainer
+updateCreditsCanvas()
 
--- Edit Note
-local creditsNote = Instance.new("TextLabel")
-creditsNote.Size = UDim2.new(0.9, 0, 0, 40)
-creditsNote.Position = UDim2.new(0.05, 0, 0, 390)
-creditsNote.BackgroundTransparency = 1
-creditsNote.Text = " "
-creditsNote.TextColor3 = Color3.fromRGB(255, 150, 50)
-creditsNote.Font = Enum.Font.Gotham
-creditsNote.TextSize = 12
-creditsNote.TextXAlignment = Enum.TextXAlignment.Center
-creditsNote.TextWrapped = true
-creditsNote.Parent = creditsContainer
-
--- Update credits canvas size
-updateCreditsCanvasSize()
-
--- =====================
 -- LOGS TAB CONTENT
--- =====================
 local logsContainer = Instance.new("Frame")
 logsContainer.Name = "LogsContainer"
 logsContainer.Size = UDim2.new(1, 0, 0, 0)
 logsContainer.BackgroundTransparency = 1
 logsContainer.Parent = logsContent
 
--- Function to update logs canvas size
-local function updateLogsCanvasSize()
+local function updateLogsCanvas()
     local totalHeight = 0
     for _, child in ipairs(logsContainer:GetChildren()) do
         if child:IsA("GuiObject") then
@@ -1163,7 +629,6 @@ local function updateLogsCanvasSize()
     logsContainer.Size = UDim2.new(1, 0, 0, totalHeight)
 end
 
--- Logs Title
 local logsTitle = Instance.new("TextLabel")
 logsTitle.Size = UDim2.new(0.9, 0, 0, 40)
 logsTitle.Position = UDim2.new(0.05, 0, 0, 0)
@@ -1175,19 +640,17 @@ logsTitle.TextSize = 22
 logsTitle.TextXAlignment = Enum.TextXAlignment.Center
 logsTitle.Parent = logsContainer
 
--- Version Label
 local versionLabel = Instance.new("TextLabel")
 versionLabel.Size = UDim2.new(0.9, 0, 0, 25)
 versionLabel.Position = UDim2.new(0.05, 0, 0, 50)
 versionLabel.BackgroundTransparency = 1
-versionLabel.Text = "Version 1.12 - Latest Update"
+versionLabel.Text = "Version 1.1 - Latest Update"
 versionLabel.TextColor3 = Color3.fromRGB(0, 200, 255)
 versionLabel.Font = Enum.Font.GothamBold
 versionLabel.TextSize = 16
 versionLabel.TextXAlignment = Enum.TextXAlignment.Center
 versionLabel.Parent = logsContainer
 
--- Update Date
 local dateLabel = Instance.new("TextLabel")
 dateLabel.Size = UDim2.new(0.9, 0, 0, 20)
 dateLabel.Position = UDim2.new(0.05, 0, 0, 80)
@@ -1199,67 +662,26 @@ dateLabel.TextSize = 14
 dateLabel.TextXAlignment = Enum.TextXAlignment.Center
 dateLabel.Parent = logsContainer
 
--- Separator Line
-local separator = Instance.new("Frame")
-separator.Size = UDim2.new(0.9, 0, 0, 2)
-separator.Position = UDim2.new(0.05, 0, 0, 110)
-separator.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-separator.BorderSizePixel = 0
-separator.Parent = logsContainer
-Instance.new("UICorner", separator).CornerRadius = UDim.new(0, 2)
+local logsText = Instance.new("TextLabel")
+logsText.Size = UDim2.new(0.9, 0, 0, 200)
+logsText.Position = UDim2.new(0.05, 0, 0, 110)
+logsText.BackgroundTransparency = 1
+logsText.Text = "Update 1.1:\n• Added Credits tab.\n• Improved Topbar.\nThanks for executing this script hope you have nice day :D"
+logsText.TextColor3 = Color3.new(1, 1, 1)
+logsText.Font = Enum.Font.Gotham
+logsText.TextSize = 14
+logsText.TextXAlignment = Enum.TextXAlignment.Left
+logsText.TextYAlignment = Enum.TextYAlignment.Top
+logsText.TextWrapped = true
+logsText.Parent = logsContainer
 
--- Update Logs Content
-local logsContentText = Instance.new("TextLabel")
-logsContentText.Size = UDim2.new(0.9, 0, 0, 300)
-logsContentText.Position = UDim2.new(0.05, 0, 0, 125)
-logsContentText.BackgroundTransparency = 1
-logsContentText.Text = [[
-Update 1.0:
-• Added Tabs: Main, Settings and Logs.
-• Added Icon next to the title
-• Added Full Bright and No Fog
-Update 1.1:
-• Added Credits tab.
-• Improved Topbar.
-Update 1.12:
-• Themes bug fixes
-• Added toggle hide (for pc) Keyword is RightShift
-• Maximum speed is now 100 to 120
+updateLogsCanvas()
 
-Thanks for executing this script hope you have nice day :D
-]]
-logsContentText.TextColor3 = Color3.new(1, 1, 1)
-logsContentText.Font = Enum.Font.Gotham
-logsContentText.TextSize = 14
-logsContentText.TextXAlignment = Enum.TextXAlignment.Left
-logsContentText.TextYAlignment = Enum.TextYAlignment.Top
-logsContentText.TextWrapped = true
-logsContentText.Parent = logsContainer
-
--- Edit Note
-local editNote = Instance.new("TextLabel")
-editNote.Size = UDim2.new(0.9, 0, 0, 40)
-editNote.Position = UDim2.new(0.05, 0, 0, 440)
-editNote.BackgroundTransparency = 1
-editNote.Text = " "
-editNote.TextColor3 = Color3.fromRGB(255, 150, 50)
-editNote.Font = Enum.Font.Gotham
-editNote.TextSize = 12
-editNote.TextXAlignment = Enum.TextXAlignment.Center
-editNote.TextWrapped = true
-editNote.Parent = logsContainer
-
--- Update logs canvas size
-updateLogsCanvasSize()
-
--- =====================
 -- Draggable GUI
--- =====================
 local dragging, dragStart, startPos
 frame.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		local mousePos = input.Position
-		-- Check if clicked on title bar area (not on tabs or buttons)
 		if mousePos.Y < frame.AbsolutePosition.Y + 45 then
 			dragging = true
 			dragStart = mousePos
@@ -1284,93 +706,47 @@ UserInputService.InputChanged:Connect(function(input)
 	end
 end)
 
--- =====================
--- Minimize / Restore Animation
--- =====================
-minimized = false
-originalSize = frame.Size
-
+-- Minimize
+local minimized = false
+local originalSize = frame.Size
 minimize.MouseButton1Click:Connect(function()
 	minimized = not minimized
 	if minimized then
-		-- shrink frame (keep showing title and tabs)
 		TweenService:Create(frame, TweenInfo.new(0.3), {Size = UDim2.new(frame.Size.X.Scale, frame.Size.X.Offset, 0, 95)}):Play()
-		
-		-- Hide tab content
-		TweenService:Create(tabContent, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
 		tabContent.Visible = false
 	else
-		-- restore frame
 		TweenService:Create(frame, TweenInfo.new(0.3), {Size = originalSize}):Play()
-		
-		-- Show tab content
 		tabContent.Visible = true
-		TweenService:Create(tabContent, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
-		
-		-- Make sure the current tab content is visible
-		if currentTab == "main" then
-			mainContent.Visible = true
-			settingsContent.Visible = false
-			creditsContent.Visible = false
-			logsContent.Visible = false
-		elseif currentTab == "settings" then
-			mainContent.Visible = false
-			settingsContent.Visible = true
-			creditsContent.Visible = false
-			logsContent.Visible = false
-		elseif currentTab == "credits" then
-			mainContent.Visible = false
-			settingsContent.Visible = false
-			creditsContent.Visible = true
-			logsContent.Visible = false
-		elseif currentTab == "logs" then
-			mainContent.Visible = false
-			settingsContent.Visible = false
-			creditsContent.Visible = false
-			logsContent.Visible = true
-		end
+		switchTab(currentTab)
 	end
 end)
 
--- =====================
 -- Entry Animation
--- =====================
-frame.BackgroundTransparency = 1
 frame.Size = UDim2.new(0, 10, 0, 10)
 frame.Position = UDim2.new(0.5, -5, 0.5, -5)
-
--- Make ALL children completely invisible from the START
+frame.BackgroundTransparency = 1
 for _, child in ipairs(frame:GetDescendants()) do
-	if child:IsA("TextLabel") or child:IsA("TextButton") then
-		child.TextTransparency = 1
-	elseif child:IsA("ImageLabel") then
-		child.ImageTransparency = 1
-	end
+    if child:IsA("GuiObject") then
+        child.Visible = false
+    end
 end
 
--- Animate entry after a small delay
-task.wait(0.5)
+task.wait(0.3)
 
--- Grow from center to final size (empty frame)
-local entryTween = TweenService:Create(frame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-	Size = UDim2.new(0, 400, 0, 400),
-	Position = UDim2.new(0.5, -200, 0.5, -200),
-	BackgroundTransparency = 0
+local growTween = TweenService:Create(frame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+    Size = UDim2.new(0, 400, 0, 400),
+    Position = UDim2.new(0.5, -200, 0.5, -200),
+    BackgroundTransparency = 0
 })
-entryTween:Play()
+growTween:Play()
 
--- ONLY AFTER frame is fully grown, fade in ALL UI elements
-entryTween.Completed:Connect(function()
-	-- Fade in text and images
-	for _, child in ipairs(frame:GetDescendants()) do
-		if child:IsA("TextLabel") or child:IsA("TextButton") then
-			TweenService:Create(child, TweenInfo.new(0.3), {
-				TextTransparency = 0
-			}):Play()
-		elseif child:IsA("ImageLabel") then
-			TweenService:Create(child, TweenInfo.new(0.3), {
-				ImageTransparency = 0
-			}):Play()
-		end
-	end
-end)
+growTween.Completed:Wait()
+
+for _, child in ipairs(frame:GetDescendants()) do
+    if child:IsA("GuiObject") then
+        child.Visible = true
+    end
+end
+
+-- Ensure only current tab is visible
+switchTab("main")
